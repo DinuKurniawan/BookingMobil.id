@@ -1,0 +1,167 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  SUPERADMIN
+  STAFF
+}
+
+enum CarCategory {
+  MPV
+  SUV
+  SEDAN
+  HATCHBACK
+  VAN
+}
+
+enum Transmission {
+  MANUAL
+  AUTOMATIC
+}
+
+enum CarStatus {
+  AVAILABLE
+  MAINTENANCE
+  INACTIVE
+}
+
+enum BookingStatus {
+  PENDING
+  PAYMENT_REVIEW
+  CONFIRMED
+  ONGOING
+  COMPLETED
+  CANCELLED
+  REJECTED
+}
+
+enum DeliveryOption {
+  PICKUP
+  DELIVERY
+}
+
+enum PaymentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(STAFF)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  verifiedPayments PaymentProof[]
+
+  @@map("admins")
+}
+
+model BankAccount {
+  id            String   @id @default(cuid())
+  bankName      String
+  accountNumber String
+  accountName   String
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("bank_accounts")
+}
+
+model Car {
+  id           String       @id @default(cuid())
+  name         String
+  brand        String
+  category     CarCategory
+  transmission Transmission
+  seats        Int
+  pricePerDay  Decimal      @db.Decimal(12, 2)
+  images       String[]
+  description  String?      @db.Text
+  status       CarStatus    @default(AVAILABLE)
+  licensePlate String       @unique
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  bookings Booking[]
+
+  @@index([status])
+  @@index([category])
+  @@map("cars")
+}
+
+model Booking {
+  id               String        @id @default(cuid())
+  bookingCode      String        @unique
+  carId            String
+  car              Car           @relation(fields: [carId], references: [id])
+  customerName     String
+  customerPhone    String
+  customerEmail    String
+  customerAddress  String
+  identityNumber   String
+  identityImageUrl String?
+  startDate        DateTime
+  endDate          DateTime
+  totalDays        Int
+  totalPrice       Decimal       @db.Decimal(12, 2)
+  status           BookingStatus @default(PENDING)
+  deliveryOption   DeliveryOption @default(PICKUP)
+  notes            String?       @db.Text
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  paymentProofs PaymentProof[]
+  testimonial   Testimonial?
+
+  @@index([carId, startDate, endDate])
+  @@index([status])
+  @@index([customerEmail])
+  @@map("bookings")
+}
+
+model PaymentProof {
+  id                String        @id @default(cuid())
+  bookingId         String
+  booking           Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  imageUrl          String
+  uploadedAt        DateTime      @default(now())
+  verifiedAt        DateTime?
+  verifiedByAdminId String?
+  verifiedByAdmin   Admin?        @relation(fields: [verifiedByAdminId], references: [id])
+  status            PaymentStatus @default(PENDING)
+  rejectionReason   String?       @db.Text
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  @@index([bookingId])
+  @@index([status])
+  @@map("payment_proofs")
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  bookingId String   @unique
+  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  name      String
+  role      String?
+  text      String   @db.Text
+  rating    Int      @default(5)
+  isApproved Boolean @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("testimonials")
+}
