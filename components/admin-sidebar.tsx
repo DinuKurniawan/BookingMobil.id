@@ -76,9 +76,11 @@ const NAV_ITEMS: NavItem[] = [
 
 interface AdminSidebarProps {
   pendingTestimonials: number;
+  collapsed?: boolean;
+  onToggle?: () => void;
 }
 
-export function AdminSidebar({ pendingTestimonials }: AdminSidebarProps) {
+export function AdminSidebar({ pendingTestimonials, collapsed = false, onToggle }: AdminSidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -93,31 +95,79 @@ export function AdminSidebar({ pendingTestimonials }: AdminSidebarProps) {
   };
 
   return (
-    <aside className="w-64 bg-slate-900 border-r border-slate-800 min-h-screen flex flex-col relative">
-
-      {/* Brand */}
-      <div className="px-5 pt-7 pb-5">
-        <Link href="/admin" className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shadow-lg shadow-blue-500/30">
+    <aside
+      className={`${
+        collapsed ? "w-[68px]" : "w-64"
+      } bg-slate-900 border-r border-slate-800 min-h-screen flex flex-col relative transition-all duration-300`}
+    >
+      {/* Brand + Toggle */}
+      <div className={`px-3 pt-5 pb-3 flex items-center ${collapsed ? "justify-center" : "justify-between"}`}>
+        {!collapsed && (
+          <Link href="/admin" className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shadow-lg shadow-blue-500/30 flex-shrink-0">
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <div className="truncate">
+              <span className="text-lg font-extrabold text-white tracking-tight">Admin</span>
+              <span className="text-lg font-bold text-blue-400">Panel</span>
+            </div>
+          </Link>
+        )}
+        {collapsed && (
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shadow-lg shadow-blue-500/30 flex-shrink-0">
             <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
-          <div>
-            <span className="text-lg font-extrabold text-white tracking-tight">Admin</span>
-            <span className="text-lg font-bold text-blue-400">Panel</span>
-          </div>
-        </Link>
+        )}
+
+        {/* Toggle inside sidebar */}
+        <button
+          onClick={onToggle}
+          className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 hover:bg-slate-800 hover:text-slate-300 transition-colors flex-shrink-0"
+          aria-label={collapsed ? "Buka sidebar" : "Tutup sidebar"}
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            {collapsed ? (
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+            ) : (
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+            )}
+          </svg>
+        </button>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 space-y-1 overflow-y-auto">
+      <nav className="flex-1 px-2 space-y-1 overflow-y-auto">
         {NAV_ITEMS.map((item) => {
           const isActive = item.exact
             ? pathname === item.href
             : pathname.startsWith(item.href);
 
-          return (
+          return collapsed ? (
+            <Link
+              key={item.href}
+              href={item.href}
+              title={item.label}
+              className={`flex items-center justify-center w-11 h-11 mx-auto rounded-xl transition-all duration-200 relative ${
+                isActive
+                  ? "bg-blue-600/15 text-blue-400"
+                  : "text-slate-500 hover:bg-slate-800 hover:text-slate-300"
+              }`}
+            >
+              {item.icon}
+              {item.href === "/admin/testimonials" && pendingTestimonials > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-red-500 text-[9px] font-bold text-white flex items-center justify-center leading-none">
+                  {pendingTestimonials}
+                </span>
+              )}
+              {isActive && (
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full bg-blue-400" />
+              )}
+            </Link>
+          ) : (
             <Link
               key={item.href}
               href={item.href}
@@ -147,24 +197,30 @@ export function AdminSidebar({ pendingTestimonials }: AdminSidebarProps) {
       </nav>
 
       {/* Bottom actions */}
-      <div className="p-3 border-t border-slate-800 space-y-1.5">
+      <div className={`p-2 border-t border-slate-800 space-y-1 ${collapsed ? "px-1" : "p-3"}`}>
         <Link
           href="/"
-          className="flex items-center justify-center gap-2 w-full px-4 py-2.5 text-xs font-semibold rounded-xl text-slate-400 bg-slate-800 hover:bg-slate-700 hover:text-slate-200 transition-colors border border-slate-700"
+          title={collapsed ? "Kembali ke Website" : undefined}
+          className={`flex items-center justify-center gap-2 w-full text-xs font-semibold rounded-xl text-slate-400 bg-slate-800 hover:bg-slate-700 hover:text-slate-200 transition-colors border border-slate-700 ${
+            collapsed ? "px-0 py-2.5" : "px-4 py-2.5"
+          }`}
         >
-          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
-          Kembali ke Website
+          {!collapsed && <span>Kembali ke Website</span>}
         </Link>
         <button
           onClick={handleLogout}
-          className="flex items-center justify-center gap-2 w-full px-4 py-2.5 text-xs font-semibold rounded-xl text-red-400 bg-slate-800 hover:bg-red-950/50 hover:text-red-300 transition-colors border border-slate-700 cursor-pointer"
+          title={collapsed ? "Keluar" : undefined}
+          className={`flex items-center justify-center gap-2 w-full text-xs font-semibold rounded-xl text-red-400 bg-slate-800 hover:bg-red-950/50 hover:text-red-300 transition-colors border border-slate-700 cursor-pointer ${
+            collapsed ? "px-0 py-2.5" : "px-4 py-2.5"
+          }`}
         >
-          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
           </svg>
-          Keluar
+          {!collapsed && <span>Keluar</span>}
         </button>
       </div>
     </aside>
