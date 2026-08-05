@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 export const metadata: Metadata = {
   title: "FAQ - BookingMobil.id",
@@ -138,7 +139,7 @@ export default function FAQPage() {
     <div className="bg-white">
       {/* Hero */}
       <section className="bg-gradient-to-br from-blue-950 via-slate-900 to-blue-900 text-white py-16 px-4 sm:px-6 lg:px-8 text-center">
-        <div className="max-w-3xl mx-auto space-y-3">
+        <ScrollReveal className="max-w-3xl mx-auto space-y-3">
           <span className="px-4 py-1.5 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30 inline-block">
             Pusat Bantuan
           </span>
@@ -150,12 +151,12 @@ export default function FAQPage() {
             BookingMobil.id. Tidak menemukan yang Anda cari? Hubungi kami
             langsung.
           </p>
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* FAQ Accordion */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto">
-        <div className="space-y-3">
+        <ScrollReveal className="space-y-3">
           {faqs.map((faq, i) => (
             <details
               key={i}
@@ -182,9 +183,10 @@ export default function FAQPage() {
               </div>
             </details>
           ))}
-        </div>
+        </ScrollReveal>
 
         {/* Still need help */}
+        <ScrollReveal delay={200}>
         <div className="mt-12 text-center bg-blue-50 rounded-2xl border border-blue-100 p-8">
           <div className="text-3xl mb-3">🤔</div>
           <h3 className="text-lg font-bold text-gray-900 mb-2">
@@ -211,6 +213,7 @@ export default function FAQPage() {
             </Link>
           </div>
         </div>
+        </ScrollReveal>
       </section>
     </div>
   );

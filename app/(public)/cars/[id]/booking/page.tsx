@@ -4,6 +4,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getCar } from "@/lib/queries";
 import { BookingForm } from "@/components/booking-form";
+import { ScrollReveal } from "@/components/scroll-reveal";
 import { CAR_CATEGORY_LABELS, formatCurrency } from "@/lib/validations/car";
 
 type Props = {
@@ -41,39 +42,44 @@ export default async function CarBookingPage({ params, searchParams }: Props) {
   return (
     <div className="py-10 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto w-full space-y-8">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-xs text-slate-500">
-        <Link href="/" className="hover:text-blue-600 transition-colors">
-          Beranda
-        </Link>
-        <span>/</span>
-        <Link href="/cars" className="hover:text-blue-600 transition-colors">
-          Armada Mobil
-        </Link>
-        <span>/</span>
-        <Link
-          href={`/cars/${car.id}`}
-          className="hover:text-blue-600 transition-colors"
-        >
-          {car.name}
-        </Link>
-        <span>/</span>
-        <span className="text-slate-900 font-medium">Form Pemesanan</span>
-      </nav>
+      <ScrollReveal>
+        <nav className="flex items-center gap-2 text-xs text-slate-500">
+          <Link href="/" className="hover:text-blue-600 transition-colors">
+            Beranda
+          </Link>
+          <span>/</span>
+          <Link href="/cars" className="hover:text-blue-600 transition-colors">
+            Armada Mobil
+          </Link>
+          <span>/</span>
+          <Link
+            href={`/cars/${car.id}`}
+            className="hover:text-blue-600 transition-colors"
+          >
+            {car.name}
+          </Link>
+          <span>/</span>
+          <span className="text-slate-900 font-medium">Form Pemesanan</span>
+        </nav>
+      </ScrollReveal>
 
       {/* Header */}
-      <div>
-        <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700 inline-block mb-2">
-          Pemesanan Sewa Mobil
-        </span>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-          Formulir Pemesanan Armada
-        </h1>
-        <p className="text-slate-500 text-sm mt-1">
-          Lengkapi data diri dan jadwal penyewaan Anda di bawah ini.
-        </p>
-      </div>
+      <ScrollReveal delay={100}>
+        <div>
+          <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700 inline-block mb-2">
+            Pemesanan Sewa Mobil
+          </span>
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+            Formulir Pemesanan Armada
+          </h1>
+          <p className="text-slate-500 text-sm mt-1">
+            Lengkapi data diri dan jadwal penyewaan Anda di bawah ini.
+          </p>
+        </div>
+      </ScrollReveal>
 
       {/* Car Overview Header Card */}
+      <ScrollReveal delay={200}>
       <div className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs flex flex-col sm:flex-row items-center gap-5">
         <div className="w-full sm:w-44 h-28 rounded-xl overflow-hidden bg-slate-100 flex-shrink-0">
           {thumbUrl ? (
@@ -112,19 +118,22 @@ export default async function CarBookingPage({ params, searchParams }: Props) {
           <span className="text-xs text-slate-400 block">/ hari</span>
         </div>
       </div>
+      </ScrollReveal>
 
       {/* Booking Form Component */}
-      <BookingForm
-        car={{
-          id: car.id,
-          name: car.name,
-          brand: car.brand,
-          pricePerDay: priceNum,
-          images: car.images,
-        }}
-        initialStartDate={sParams.startDate}
-        initialEndDate={sParams.endDate}
-      />
+      <ScrollReveal delay={300}>
+        <BookingForm
+          car={{
+            id: car.id,
+            name: car.name,
+            brand: car.brand,
+            pricePerDay: priceNum,
+            images: car.images,
+          }}
+          initialStartDate={sParams.startDate}
+          initialEndDate={sParams.endDate}
+        />
+      </ScrollReveal>
     </div>
   );
 }

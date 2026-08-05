@@ -5,6 +5,7 @@ import { getCar } from "@/lib/queries";
 import { CarImageGallery } from "@/components/car-image-gallery";
 import { AvailabilityChecker } from "@/components/availability-checker";
 import { CarAvailabilityCalendar } from "@/components/car-availability-calendar";
+import { ScrollReveal } from "@/components/scroll-reveal";
 import {
   CAR_CATEGORY_LABELS,
   TRANSMISSION_LABELS,
@@ -46,20 +47,23 @@ export default async function CarDetailPage({ params }: Props) {
   return (
     <div className="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-8">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-xs text-gray-500">
-        <Link href="/" className="hover:text-blue-600 transition-colors">
-          Beranda
-        </Link>
-        <span>/</span>
-        <Link href="/cars" className="hover:text-blue-600 transition-colors">
-          Armada Mobil
-        </Link>
-        <span>/</span>
-        <span className="text-gray-900 font-medium truncate">{car.name}</span>
-      </nav>
+      <ScrollReveal>
+        <nav className="flex items-center gap-2 text-xs text-gray-500">
+          <Link href="/" className="hover:text-blue-600 transition-colors">
+            Beranda
+          </Link>
+          <span>/</span>
+          <Link href="/cars" className="hover:text-blue-600 transition-colors">
+            Armada Mobil
+          </Link>
+          <span>/</span>
+          <span className="text-gray-900 font-medium truncate">{car.name}</span>
+        </nav>
+      </ScrollReveal>
 
       {/* Title & Brand Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gray-200 pb-6">
+      <ScrollReveal delay={100}>
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gray-200 pb-6">
         <div>
           <div className="flex items-center gap-2.5 mb-2">
             <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700">
@@ -93,15 +97,19 @@ export default async function CarDetailPage({ params }: Props) {
           </div>
         </div>
       </div>
+      </ScrollReveal>
 
       {/* Main Grid: Gallery & Specs vs Booking Form */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         {/* Left 2 Cols: Photo Gallery & Specifications & Description */}
         <div className="lg:col-span-2 space-y-8">
           {/* Photo Gallery */}
-          <CarImageGallery images={car.images} carName={car.name} />
+          <ScrollReveal delay={200}>
+            <CarImageGallery images={car.images} carName={car.name} />
+          </ScrollReveal>
 
           {/* Specifications Card */}
+          <ScrollReveal delay={300}>
           <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm space-y-4">
             <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
               <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -148,11 +156,15 @@ export default async function CarDetailPage({ params }: Props) {
               </div>
             </div>
           </div>
+          </ScrollReveal>
 
           {/* Availability Calendar */}
-          <CarAvailabilityCalendar carId={car.id} />
+          <ScrollReveal delay={400}>
+            <CarAvailabilityCalendar carId={car.id} />
+          </ScrollReveal>
 
           {/* Description */}
+          <ScrollReveal delay={500}>
           <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm space-y-3">
             <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
               <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -164,12 +176,15 @@ export default async function CarDetailPage({ params }: Props) {
               {car.description || "Tidak ada deskripsi tambahan untuk armada kendaraan ini."}
             </p>
           </div>
+          </ScrollReveal>
         </div>
 
         {/* Right 1 Col: Availability Checker & Booking Sidebar */}
+        <ScrollReveal delay={300} variant="right">
         <div className="lg:sticky lg:top-24">
           <AvailabilityChecker carId={car.id} pricePerDay={priceNum} />
         </div>
+        </ScrollReveal>
       </div>
     </div>
   );

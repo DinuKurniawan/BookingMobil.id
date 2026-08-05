@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { TestimonialForm } from "./testimonial-form";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 type Props = {
   params: Promise<{ bookingCode: string }>;
@@ -99,15 +100,18 @@ export default async function BeriTestimoniPage({ params, searchParams }: Props)
   return (
     <div className="py-10 px-4 sm:px-6 lg:px-8 max-w-lg mx-auto w-full space-y-6">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-xs text-slate-500">
-        <Link href="/" className="hover:text-blue-600 transition-colors">
-          Beranda
-        </Link>
-        <span>/</span>
-        <span className="text-slate-900 font-medium">Beri Testimoni</span>
-      </nav>
+      <ScrollReveal>
+        <nav className="flex items-center gap-2 text-xs text-slate-500">
+          <Link href="/" className="hover:text-blue-600 transition-colors">
+            Beranda
+          </Link>
+          <span>/</span>
+          <span className="text-slate-900 font-medium">Beri Testimoni</span>
+        </nav>
+      </ScrollReveal>
 
-      <div>
+      <ScrollReveal delay={100}>
+        <div>
         <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700 inline-block mb-2">
           ⭐ Testimoni Pelanggan
         </span>
@@ -118,13 +122,16 @@ export default async function BeriTestimoniPage({ params, searchParams }: Props)
           Beri penilaian untuk sewa mobil <strong>{booking.car.name}</strong> ({booking.car.brand}). Testimoni Anda akan ditampilkan di halaman utama kami setelah disetujui admin.
         </p>
       </div>
+      </ScrollReveal>
 
-      <TestimonialForm
-        bookingId={booking.id}
-        customerName={booking.customerName}
-        bookingCode={booking.bookingCode}
-        email={booking.customerEmail}
-      />
+      <ScrollReveal delay={200}>
+        <TestimonialForm
+          bookingId={booking.id}
+          customerName={booking.customerName}
+          bookingCode={booking.bookingCode}
+          email={booking.customerEmail}
+        />
+      </ScrollReveal>
     </div>
   );
 }

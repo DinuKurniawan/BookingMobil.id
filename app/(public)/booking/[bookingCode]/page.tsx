@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { PaymentProofUploadForm } from "@/components/payment-proof-upload-form";
 import { CopyButton } from "@/components/copy-button";
+import { ScrollReveal } from "@/components/scroll-reveal";
 import { getBankAccounts } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import {
@@ -225,19 +226,22 @@ export default async function BookingConfirmationPage({ params, searchParams }: 
   return (
     <div className="py-10 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto w-full space-y-8">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-xs text-slate-500">
-        <Link href="/" className="hover:text-blue-600 transition-colors">
-          Beranda
-        </Link>
-        <span>/</span>
-        <Link href="/cars" className="hover:text-blue-600 transition-colors">
-          Armada Mobil
-        </Link>
-        <span>/</span>
-        <span className="text-slate-900 font-medium">Konfirmasi Pemesanan</span>
-      </nav>
+      <ScrollReveal>
+        <nav className="flex items-center gap-2 text-xs text-slate-500">
+          <Link href="/" className="hover:text-blue-600 transition-colors">
+            Beranda
+          </Link>
+          <span>/</span>
+          <Link href="/cars" className="hover:text-blue-600 transition-colors">
+            Armada Mobil
+          </Link>
+          <span>/</span>
+          <span className="text-slate-900 font-medium">Konfirmasi Pemesanan</span>
+        </nav>
+      </ScrollReveal>
 
       {/* Header Banner */}
+      <ScrollReveal delay={100}>
       <div className={`p-6 sm:p-8 rounded-3xl border shadow-sm ${statusInfo.bgClass} space-y-4`}>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
@@ -287,8 +291,10 @@ export default async function BookingConfirmationPage({ params, searchParams }: 
           </div>
         </div>
       </div>
+      </ScrollReveal>
 
       {/* Main Grid: Detail Booking & Payment Instructions */}
+      <ScrollReveal delay={200}>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         {/* Left 2 Cols: Detail Booking & Form Upload Bukti */}
         <div className="lg:col-span-2 space-y-6">
@@ -505,6 +511,7 @@ export default async function BookingConfirmationPage({ params, searchParams }: 
           </div>
         </div>
       </div>
+      </ScrollReveal>
     </div>
   );
 }

@@ -29,40 +29,38 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-200/80 bg-white/90 backdrop-blur-md transition-all">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 h-16">
+      <div className="flex items-center justify-between px-6 sm:px-10 lg:px-16 h-16 w-full">
         {/* Brand Logo */}
-        <div className="flex items-center gap-8">
-          <Link href="/" className="text-xl font-black tracking-tight text-blue-600 flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-md shadow-blue-600/30">
-              🚗
-            </div>
-            <span>
-              BookingMobil<span className="text-slate-900">.id</span>
-            </span>
-          </Link>
+        <Link href="/" className="hidden md:flex text-xl font-black tracking-tight text-blue-600 items-center gap-2 flex-shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-md shadow-blue-600/30">
+            🚗
+          </div>
+          <span>
+            BookingMobil<span className="text-slate-900">.id</span>
+          </span>
+        </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-600">
-            <Link href="/" className="hover:text-blue-600 transition-colors">
-              Beranda
-            </Link>
-            <Link href="/cars" className="hover:text-blue-600 transition-colors">
-              Armada Mobil
-            </Link>
-            <Link href="/tentang-kami" className="hover:text-blue-600 transition-colors">
-              Tentang Kami
-            </Link>
-            <Link href="/faq" className="hover:text-blue-600 transition-colors">
-              FAQ
-            </Link>
-            <Link href="/cek-booking" className="hover:text-blue-600 transition-colors">
-              Cek Status Booking
-            </Link>
-          </nav>
-        </div>
+        {/* Desktop Navigation — centered */}
+        <nav className="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-600">
+          <Link href="/" className="hover:text-blue-600 transition-colors">
+            Beranda
+          </Link>
+          <Link href="/cars" className="hover:text-blue-600 transition-colors">
+            Armada Mobil
+          </Link>
+          <Link href="/tentang-kami" className="hover:text-blue-600 transition-colors">
+            Tentang Kami
+          </Link>
+          <Link href="/faq" className="hover:text-blue-600 transition-colors">
+            FAQ
+          </Link>
+          <Link href="/cek-booking" className="hover:text-blue-600 transition-colors">
+            Cek Status Booking
+          </Link>
+        </nav>
 
         {/* Action Buttons (Desktop) */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-3 flex-shrink-0">
           <Link href="/cek-booking">
             <Button variant="outline" size="sm" className="border-blue-200 text-blue-700 bg-blue-50/50 hover:bg-blue-100 font-semibold">
               🔍 Cek Booking
@@ -80,8 +78,16 @@ export function Navbar() {
           </Link>
         </div>
 
-        {/* Mobile Hamburger Button */}
-        <div className="flex md:hidden items-center gap-2">
+        {/* Mobile: Logo + Hamburger */}
+        <div className="flex md:hidden items-center justify-between w-full">
+          <Link href="/" className="text-xl font-black tracking-tight text-blue-600 flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-md shadow-blue-600/30">
+              🚗
+            </div>
+            <span>
+              BookingMobil<span className="text-slate-900">.id</span>
+            </span>
+          </Link>
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

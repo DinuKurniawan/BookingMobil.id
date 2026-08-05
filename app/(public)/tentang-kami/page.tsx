@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { TentangKamiMap } from "./map";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 export const metadata: Metadata = {
   title: "Tentang Kami - BookingMobil.id",
@@ -11,7 +12,7 @@ export default function TentangKamiPage() {
     <div className="bg-white">
       {/* Hero */}
       <section className="bg-gradient-to-br from-blue-950 via-slate-900 to-blue-900 text-white py-20 px-4 sm:px-6 lg:px-8 text-center">
-        <div className="max-w-3xl mx-auto space-y-4">
+        <ScrollReveal className="max-w-3xl mx-auto space-y-4">
           <span className="px-4 py-1.5 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30 inline-block">
             Tentang Kami
           </span>
@@ -24,12 +25,12 @@ export default function TentangKamiPage() {
           <p className="text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed">
             BookingMobil.id hadir untuk memberikan pengalaman sewa mobil yang mudah, transparan, dan terpercaya bagi seluruh pelanggan di Indonesia.
           </p>
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* Visi & Misi */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <ScrollReveal className="grid grid-cols-1 md:grid-cols-2 gap-10">
           <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 border border-blue-100">
             <div className="w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center mb-5">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -65,12 +66,12 @@ export default function TentangKamiPage() {
               </li>
             </ul>
           </div>
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* Stats */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
-        <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6">
+        <ScrollReveal className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6">
           <div className="bg-white rounded-xl p-6 text-center border border-gray-100 shadow-sm">
             <p className="text-3xl font-extrabold text-blue-600">50+</p>
             <p className="text-sm text-gray-500 mt-1">Armada Mobil</p>
@@ -87,15 +88,17 @@ export default function TentangKamiPage() {
             <p className="text-3xl font-extrabold text-blue-600">24/7</p>
             <p className="text-sm text-gray-500 mt-1">Dukungan Pelanggan</p>
           </div>
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* Kenapa Memilih Kami */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+        <ScrollReveal>
         <div className="text-center mb-12">
           <span className="text-sm font-semibold text-blue-600 uppercase tracking-wider">Keunggulan</span>
           <h2 className="text-3xl font-bold text-gray-900 mt-2">Mengapa BookingMobil.id?</h2>
         </div>
+        </ScrollReveal>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className="p-6 rounded-xl border border-gray-200 hover:border-blue-200 hover:shadow-md transition-all">
@@ -133,7 +136,7 @@ export default function TentangKamiPage() {
 
       {/* Lokasi */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
-        <div className="max-w-5xl mx-auto">
+        <ScrollReveal className="max-w-5xl mx-auto">
           <div className="text-center mb-10">
             <span className="text-sm font-semibold text-blue-600 uppercase tracking-wider">Kunjungi Kami</span>
             <h2 className="text-3xl font-bold text-gray-900 mt-2">Lokasi Kantor</h2>
@@ -163,12 +166,12 @@ export default function TentangKamiPage() {
               </div>
             </div>
           </div>
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* CTA */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-blue-800 text-white text-center">
-        <div className="max-w-2xl mx-auto space-y-4">
+        <ScrollReveal className="max-w-2xl mx-auto space-y-4">
           <h2 className="text-3xl font-bold">Siap Memulai Perjalanan Anda?</h2>
           <p className="text-blue-100">Booking mobil impian Anda sekarang dan nikmati pengalaman berkendara terbaik.</p>
           <div className="flex flex-wrap justify-center gap-4 pt-2">
@@ -185,7 +188,7 @@ export default function TentangKamiPage() {
               📞 Hubungi Kami
             </a>
           </div>
-        </div>
+        </ScrollReveal>
       </section>
     </div>
   );

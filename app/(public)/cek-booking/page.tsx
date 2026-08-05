@@ -6,6 +6,7 @@ import { cekBookingSchema } from "@/lib/validations/cek-booking";
 import { Button } from "@/components/ui/button";
 import { BookingStatusTimeline } from "@/components/booking-status-timeline";
 import { CopyButton } from "@/components/copy-button";
+import { ScrollReveal } from "@/components/scroll-reveal";
 import {
   CAR_CATEGORY_LABELS,
   formatCurrency,
@@ -104,15 +105,18 @@ export default async function CekBookingPage({ searchParams }: Props) {
   return (
     <div className="py-10 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto w-full space-y-8">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-xs text-slate-500">
-        <Link href="/" className="hover:text-blue-600 transition-colors">
-          Beranda
-        </Link>
-        <span>/</span>
-        <span className="text-slate-900 font-medium">Cek Status Booking</span>
-      </nav>
+      <ScrollReveal>
+        <nav className="flex items-center gap-2 text-xs text-slate-500">
+          <Link href="/" className="hover:text-blue-600 transition-colors">
+            Beranda
+          </Link>
+          <span>/</span>
+          <span className="text-slate-900 font-medium">Cek Status Booking</span>
+        </nav>
+      </ScrollReveal>
 
       {/* Header Banner */}
+      <ScrollReveal delay={100}>
       <div className="bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white p-8 sm:p-10 rounded-3xl shadow-xl space-y-6 relative overflow-hidden">
         <div className="relative z-10 max-w-2xl space-y-2">
           <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30 inline-block mb-1">
@@ -173,15 +177,18 @@ export default async function CekBookingPage({ searchParams }: Props) {
           </div>
         </form>
       </div>
+      </ScrollReveal>
 
       {/* Validation Error Alert */}
       {validationError && (
-        <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-medium flex items-center gap-3">
-          <svg className="w-5 h-5 text-amber-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-          </svg>
-          <span>{validationError}</span>
-        </div>
+        <ScrollReveal>
+          <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-medium flex items-center gap-3">
+            <svg className="w-5 h-5 text-amber-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <span>{validationError}</span>
+          </div>
+        </ScrollReveal>
       )}
 
       {/* SEARCH RESULTS SECTION */}

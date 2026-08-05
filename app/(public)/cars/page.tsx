@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { prisma } from "@/lib/prisma";
 import { CarCard } from "@/components/car-card";
 import { CatalogFilters } from "@/components/catalog-filters";
+import { ScrollReveal } from "@/components/scroll-reveal";
 import type { Prisma } from "@prisma/client";
 
 export const metadata: Metadata = {
@@ -117,7 +118,7 @@ export default async function CarsPage({
 
         <div className="relative max-w-7xl mx-auto">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-            <div className="space-y-3">
+            <ScrollReveal className="space-y-3">
               <div className="flex items-center gap-2">
                 <span className="px-3 py-1 rounded-full text-[11px] font-semibold bg-blue-500/15 text-blue-300 border border-blue-500/25">
                   Katalog Lengkap
@@ -136,29 +137,31 @@ export default async function CarsPage({
                 Temukan mobil impian Anda dari koleksi armada kami yang selalu
                 terawat dan siap menemani perjalanan Anda.
               </p>
-            </div>
+            </ScrollReveal>
 
             {/* Quick stats */}
-            <div className="flex gap-6 lg:gap-8">
-              <div className="text-center">
-                <p className="text-2xl lg:text-3xl font-bold text-white">
-                  {totalAvailable}
-                </p>
-                <p className="text-xs text-gray-400 mt-1">Unit Tersedia</p>
+            <ScrollReveal delay={200}>
+              <div className="flex gap-6 lg:gap-8">
+                <div className="text-center">
+                  <p className="text-2xl lg:text-3xl font-bold text-white">
+                    {totalAvailable}
+                  </p>
+                  <p className="text-xs text-gray-400 mt-1">Unit Tersedia</p>
+                </div>
+                <div className="w-px bg-gray-700/50" />
+                <div className="text-center">
+                  <p className="text-2xl lg:text-3xl font-bold text-white">5</p>
+                  <p className="text-xs text-gray-400 mt-1">Kategori</p>
+                </div>
+                <div className="w-px bg-gray-700/50" />
+                <div className="text-center">
+                  <p className="text-2xl lg:text-3xl font-bold text-white">
+                    24/7
+                  </p>
+                  <p className="text-xs text-gray-400 mt-1">Layanan</p>
+                </div>
               </div>
-              <div className="w-px bg-gray-700/50" />
-              <div className="text-center">
-                <p className="text-2xl lg:text-3xl font-bold text-white">5</p>
-                <p className="text-xs text-gray-400 mt-1">Kategori</p>
-              </div>
-              <div className="w-px bg-gray-700/50" />
-              <div className="text-center">
-                <p className="text-2xl lg:text-3xl font-bold text-white">
-                  24/7
-                </p>
-                <p className="text-xs text-gray-400 mt-1">Layanan</p>
-              </div>
-            </div>
+            </ScrollReveal>
           </div>
         </div>
       </section>
@@ -183,37 +186,40 @@ export default async function CarsPage({
         </Suspense>
 
         {/* Results info */}
-        <div className="flex items-center justify-between mb-6">
-          <p className="text-sm text-gray-500">
-            {hasActiveFilters ? (
-              <>
-                Ditemukan{" "}
-                <span className="font-semibold text-gray-800">
-                  {cars.length}
-                </span>{" "}
-                mobil
-                {cars.length !== totalAvailable && (
-                  <span className="text-gray-400">
-                    {" "}
-                    dari {totalAvailable} total
-                  </span>
-                )}
-              </>
-            ) : (
-              <>
-                Menampilkan{" "}
-                <span className="font-semibold text-gray-800">
-                  semua {cars.length}
-                </span>{" "}
-                mobil tersedia
-              </>
-            )}
-          </p>
-        </div>
+        <ScrollReveal>
+          <div className="flex items-center justify-between mb-6">
+            <p className="text-sm text-gray-500">
+              {hasActiveFilters ? (
+                <>
+                  Ditemukan{" "}
+                  <span className="font-semibold text-gray-800">
+                    {cars.length}
+                  </span>{" "}
+                  mobil
+                  {cars.length !== totalAvailable && (
+                    <span className="text-gray-400">
+                      {" "}
+                      dari {totalAvailable} total
+                    </span>
+                  )}
+                </>
+              ) : (
+                <>
+                  Menampilkan{" "}
+                  <span className="font-semibold text-gray-800">
+                    semua {cars.length}
+                  </span>{" "}
+                  mobil tersedia
+                </>
+              )}
+            </p>
+          </div>
+        </ScrollReveal>
 
         {/* Cars Grid or Empty State */}
         {cars.length === 0 ? (
-          <div className="py-20 text-center bg-white rounded-2xl border border-gray-200 shadow-sm">
+          <ScrollReveal>
+            <div className="py-20 text-center bg-white rounded-2xl border border-gray-200 shadow-sm">
             <div className="w-20 h-20 mx-auto rounded-full bg-gray-100 flex items-center justify-center mb-5">
               <svg
                 className="w-10 h-10 text-gray-300"
@@ -251,22 +257,24 @@ export default async function CarsPage({
               </>
             )}
           </div>
+          </ScrollReveal>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {cars.map((car) => (
-              <CarCard
-                key={car.id}
-                car={{
-                  id: car.id,
-                  name: car.name,
-                  brand: car.brand,
-                  category: car.category,
-                  transmission: car.transmission,
-                  seats: car.seats,
-                  pricePerDay: car.pricePerDay.toNumber(),
-                  images: car.images,
-                }}
-              />
+            {cars.map((car, i) => (
+              <ScrollReveal key={car.id} delay={i * 80}>
+                <CarCard
+                  car={{
+                    id: car.id,
+                    name: car.name,
+                    brand: car.brand,
+                    category: car.category,
+                    transmission: car.transmission,
+                    seats: car.seats,
+                    pricePerDay: car.pricePerDay.toNumber(),
+                    images: car.images,
+                  }}
+                />
+              </ScrollReveal>
             ))}
           </div>
         )}

@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { ContactMap } from "./map";
 import { Button } from "@/components/ui/button";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 export default function ContactPage() {
   return (
     <div className="bg-white">
       {/* Hero */}
       <section className="bg-gradient-to-br from-blue-950 via-slate-900 to-blue-900 text-white py-20 px-4 sm:px-6 lg:px-8 text-center">
-        <div className="max-w-3xl mx-auto space-y-4">
+        <ScrollReveal className="max-w-3xl mx-auto space-y-4">
           <span className="px-4 py-1.5 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30 inline-block">
             Kontak Kami
           </span>
@@ -22,13 +23,14 @@ export default function ContactPage() {
           <p className="text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed">
             Punya pertanyaan seputar armada, pemesanan, atau butuh bantuan? Jangan ragu untuk menghubungi tim kami kapan saja.
           </p>
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* Contact Info Cards */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* WhatsApp */}
+          <ScrollReveal delay={100}>
           <a
             href="https://wa.me/6281234567890?text=Halo%20BookingMobil%2C%20saya%20mau%20tanya..."
             target="_blank"
@@ -46,8 +48,10 @@ export default function ContactPage() {
               0812-3456-7890 →
             </span>
           </a>
+          </ScrollReveal>
 
           {/* Email */}
+          <ScrollReveal delay={200}>
           <a
             href="mailto:info@bookingmobil.com"
             className="group bg-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:shadow-md hover:border-blue-300 transition-all text-left"
@@ -63,8 +67,10 @@ export default function ContactPage() {
               info@bookingmobil.com →
             </span>
           </a>
+          </ScrollReveal>
 
           {/* Telepon */}
+          <ScrollReveal delay={300}>
           <a
             href="tel:+6281234567890"
             className="group bg-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:shadow-md hover:border-amber-300 transition-all text-left"
@@ -80,6 +86,7 @@ export default function ContactPage() {
               +62 812-3456-7890 →
             </span>
           </a>
+          </ScrollReveal>
         </div>
       </section>
 

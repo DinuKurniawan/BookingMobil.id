@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 export const metadata: Metadata = {
   title: "Syarat & Ketentuan - BookingMobil.id",
@@ -11,7 +12,7 @@ export default function SyaratKetentuanPage() {
     <div className="bg-white">
       {/* Hero */}
       <section className="bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white py-16 px-4 sm:px-6 lg:px-8 text-center">
-        <div className="max-w-3xl mx-auto space-y-3">
+        <ScrollReveal className="max-w-3xl mx-auto space-y-3">
           <span className="px-4 py-1.5 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30 inline-block">
             Legal
           </span>
@@ -21,10 +22,11 @@ export default function SyaratKetentuanPage() {
           <p className="text-gray-400 text-sm max-w-xl mx-auto">
             Berlaku efektif sejak 1 Agustus 2025. Dengan menggunakan layanan BookingMobil.id, Anda menyetujui seluruh ketentuan di bawah ini.
           </p>
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* Content */}
+      <ScrollReveal delay={100}>
       <article className="py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto prose prose-slate prose-sm sm:prose-base">
         {/* 1. Umum */}
         <section className="mb-12">
@@ -206,12 +208,13 @@ export default function SyaratKetentuanPage() {
               Segala sengketa yang timbul akan diselesaikan secara musyawarah. Apabila tidak tercapai kesepakatan, sengketa akan diselesaikan melalui Pengadilan Negeri Jakarta Pusat.
             </p>
           </div>
-        </section>
-      </article>
+          </section>
+        </article>
+      </ScrollReveal>
 
       {/* Contact CTA */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50 border-t border-gray-200">
-        <div className="max-w-2xl mx-auto text-center space-y-4">
+        <ScrollReveal className="max-w-2xl mx-auto text-center space-y-4">
           <h2 className="text-xl font-bold text-gray-900">Masih ada pertanyaan?</h2>
           <p className="text-gray-500 text-sm">
             Tim kami siap membantu menjawab pertanyaan Anda seputar syarat dan ketentuan ini.
@@ -222,7 +225,7 @@ export default function SyaratKetentuanPage() {
           >
             📞 Hubungi Kami
           </a>
-        </div>
+        </ScrollReveal>
       </section>
     </div>
   );
