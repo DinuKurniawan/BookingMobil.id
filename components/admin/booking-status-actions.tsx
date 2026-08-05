@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import {
   approvePayment,
   rejectPayment,
@@ -28,6 +29,33 @@ export function BookingStatusActions({
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [showRejectForm, setShowRejectForm] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
+  const router = useRouter();
+
+  useEffect(() => {
+    if (currentStatus !== "CONFIRMED") {
+      return;
+    }
+
+    const syncStatus = async () => {
+      if (new Date() < new Date(startDate)) {
+        return;
+      }
+
+      const response = await fetch("/api/admin/booking-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bookingId, status: "ONGOING" }),
+      });
+
+      if (response.ok) {
+        router.refresh();
+      }
+    };
+
+    void syncStatus();
+    const intervalId = window.setInterval(syncStatus, 60_000);
+    return () => window.clearInterval(intervalId);
+  }, [bookingId, currentStatus, router, startDate]);
 
   const now = new Date();
   const start = new Date(startDate);

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendBookingEmail } from "@/lib/email";
+import { getCurrentAdmin } from "@/lib/auth";
 
 const ALLOWED_TRANSITIONS: Record<string, string[]> = {
   PENDING: ["CANCELLED"],
@@ -11,6 +12,11 @@ const ALLOWED_TRANSITIONS: Record<string, string[]> = {
 
 export async function POST(request: Request) {
   try {
+    const admin = await getCurrentAdmin();
+    if (!admin) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
     const { bookingId, status } = await request.json();
 
     if (!bookingId || !status) {
@@ -24,6 +30,13 @@ export async function POST(request: Request) {
 
     if (!booking) {
       return NextResponse.json({ message: "Booking tidak ditemukan" }, { status: 404 });
+    }
+
+    if (status === "ONGOING" && booking.status === "CONFIRMED" && new Date() < booking.startDate) {
+      return NextResponse.json(
+        { message: "Tanggal mulai sewa belum tiba" },
+        { status: 400 },
+      );
     }
 
     const allowed = ALLOWED_TRANSITIONS[booking.status];
