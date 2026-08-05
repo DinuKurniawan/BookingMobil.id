@@ -7,7 +7,19 @@ import { DeleteCarDialog } from "@/components/admin/delete-car-dialog";
 import { CAR_CATEGORY_LABELS, formatCurrency } from "@/lib/validations/car";
 
 export default async function AdminCarsPage() {
-  const cars = await prisma.car.findMany({ orderBy: { createdAt: "desc" } });
+  const cars = await prisma.car.findMany({
+    select: {
+      id: true,
+      name: true,
+      brand: true,
+      category: true,
+      pricePerDay: true,
+      status: true,
+      licensePlate: true,
+      images: true,
+    },
+    orderBy: { createdAt: "desc" },
+  });
 
   return (
     <div className="space-y-6">

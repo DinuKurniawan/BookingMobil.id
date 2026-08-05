@@ -43,7 +43,19 @@ async function BookingsTable({
 
   const bookings = await prisma.booking.findMany({
     where,
-    include: { car: true },
+    select: {
+      id: true,
+      bookingCode: true,
+      customerName: true,
+      customerPhone: true,
+      startDate: true,
+      endDate: true,
+      totalDays: true,
+      totalPrice: true,
+      status: true,
+      createdAt: true,
+      car: { select: { name: true, licensePlate: true } },
+    },
     orderBy: { createdAt: "desc" },
     take: 200,
   });

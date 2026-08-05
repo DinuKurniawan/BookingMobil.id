@@ -112,11 +112,28 @@ export default async function BookingConfirmationPage({ params, searchParams }: 
 
   const booking = await prisma.booking.findUnique({
     where: { bookingCode },
-    include: {
-      car: true,
-      testimonial: true,
+    select: {
+      bookingCode: true,
+      customerName: true,
+      customerPhone: true,
+      customerEmail: true,
+      customerAddress: true,
+      identityNumber: true,
+      startDate: true,
+      endDate: true,
+      totalDays: true,
+      totalPrice: true,
+      status: true,
+      notes: true,
+      deliveryOption: true,
+      createdAt: true,
+      car: {
+        select: { id: true, name: true, brand: true, category: true, transmission: true, seats: true, pricePerDay: true, images: true, licensePlate: true },
+      },
+      testimonial: { select: { id: true, text: true, rating: true } },
       paymentProofs: {
         orderBy: { createdAt: "desc" },
+        select: { id: true, status: true, imageUrl: true, uploadedAt: true, rejectionReason: true, createdAt: true },
       },
     },
   });

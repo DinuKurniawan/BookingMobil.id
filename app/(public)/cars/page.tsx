@@ -76,6 +76,16 @@ export default async function CarsPage({
 
   const cars = await prisma.car.findMany({
     where,
+    select: {
+      id: true,
+      name: true,
+      brand: true,
+      category: true,
+      transmission: true,
+      seats: true,
+      pricePerDay: true,
+      images: true,
+    },
     orderBy: { createdAt: "desc" },
   });
 

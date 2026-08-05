@@ -24,7 +24,15 @@ export default async function BeriTestimoniPage({ params, searchParams }: Props)
 
   const booking = await prisma.booking.findUnique({
     where: { bookingCode },
-    include: { car: true, testimonial: true },
+    select: {
+      id: true,
+      bookingCode: true,
+      customerName: true,
+      customerEmail: true,
+      status: true,
+      car: { select: { name: true, brand: true } },
+      testimonial: { select: { id: true } },
+    },
   });
 
   if (!booking) {

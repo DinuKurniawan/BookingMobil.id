@@ -64,82 +64,118 @@ const getTimeSeriesData = unstable_cache(
   async (): Promise<{ weekly: TimeSeriesPoint[]; monthly: TimeSeriesPoint[]; yearly: TimeSeriesPoint[] }> => {
     const now = new Date();
 
-    // Weekly: last 7 days
-    const weekly: TimeSeriesPoint[] = [];
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date(now);
-      d.setDate(d.getDate() - i);
-      d.setHours(0, 0, 0, 0);
-      const start = new Date(d);
-      const end = new Date(d);
-      end.setHours(23, 59, 59, 999);
+    // Build date index maps (no DB queries yet)
+    const weekStart = new Date(now);
+    weekStart.setDate(weekStart.getDate() - 6);
+    weekStart.setHours(0, 0, 0, 0);
 
-      const [bookings, revenue] = await Promise.all([
-        prisma.booking.count({ where: { createdAt: { gte: start, lte: end } } }),
-        prisma.booking.aggregate({
-          _sum: { totalPrice: true },
-          where: { status: { in: ["CONFIRMED", "ONGOING", "COMPLETED"] }, endDate: { gte: start, lte: end } },
-        }),
-      ]);
-
-      weekly.push({
-        date: d.toISOString().split("T")[0],
+    const weekMap = new Map<string, TimeSeriesPoint>();
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(weekStart.getTime() + i * 86_400_000);
+      const key = d.toISOString().split("T")[0];
+      weekMap.set(key, {
+        date: key,
         label: d.toLocaleDateString("id-ID", { weekday: "short", day: "numeric" }),
-        bookings,
-        revenue: revenue._sum.totalPrice?.toNumber() ?? 0,
+        bookings: 0,
+        revenue: 0,
       });
     }
 
-    // Monthly: last 30 days
-    const monthly: TimeSeriesPoint[] = [];
-    for (let i = 29; i >= 0; i--) {
-      const d = new Date(now);
-      d.setDate(d.getDate() - i);
-      d.setHours(0, 0, 0, 0);
-      const start = new Date(d);
-      const end = new Date(d);
-      end.setHours(23, 59, 59, 999);
+    const monthStart = new Date(now);
+    monthStart.setDate(monthStart.getDate() - 29);
+    monthStart.setHours(0, 0, 0, 0);
 
-      const [bookings, revenue] = await Promise.all([
-        prisma.booking.count({ where: { createdAt: { gte: start, lte: end } } }),
-        prisma.booking.aggregate({
-          _sum: { totalPrice: true },
-          where: { status: { in: ["CONFIRMED", "ONGOING", "COMPLETED"] }, endDate: { gte: start, lte: end } },
-        }),
-      ]);
-
-      monthly.push({
-        date: d.toISOString().split("T")[0],
+    const monthMap = new Map<string, TimeSeriesPoint>();
+    for (let i = 0; i < 30; i++) {
+      const d = new Date(monthStart.getTime() + i * 86_400_000);
+      const key = d.toISOString().split("T")[0];
+      monthMap.set(key, {
+        date: key,
         label: d.toLocaleDateString("id-ID", { day: "numeric", month: "short" }),
-        bookings,
-        revenue: revenue._sum.totalPrice?.toNumber() ?? 0,
+        bookings: 0,
+        revenue: 0,
       });
     }
 
-    // Yearly: last 12 months
-    const yearly: TimeSeriesPoint[] = [];
-    for (let i = 11; i >= 0; i--) {
-      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const start = new Date(d.getFullYear(), d.getMonth(), 1);
-      const end = new Date(d.getFullYear(), d.getMonth() + 1, 0, 23, 59, 59, 999);
-
-      const [bookings, revenue] = await Promise.all([
-        prisma.booking.count({ where: { createdAt: { gte: start, lte: end } } }),
-        prisma.booking.aggregate({
-          _sum: { totalPrice: true },
-          where: { status: { in: ["CONFIRMED", "ONGOING", "COMPLETED"] }, endDate: { gte: start, lte: end } },
-        }),
-      ]);
-
-      yearly.push({
-        date: d.toISOString().split("T")[0],
+    const yStart = new Date(now.getFullYear(), now.getMonth() - 11, 1);
+    const yEnd = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    const yMap = new Map<string, TimeSeriesPoint>();
+    for (let i = 0; i < 12; i++) {
+      const d = new Date(yStart.getFullYear(), yStart.getMonth() + i, 1);
+      const key = d.toISOString().split("T")[0];
+      yMap.set(key, {
+        date: key,
         label: d.toLocaleDateString("id-ID", { month: "short", year: "numeric" }),
-        bookings,
-        revenue: revenue._sum.totalPrice?.toNumber() ?? 0,
+        bookings: 0,
+        revenue: 0,
       });
     }
 
-    return { weekly, monthly, yearly };
+    // Only 3 raw queries total (replaces 98 individual queries)
+
+    const [dailyCounts, dailyRevenues, yCounts, yRevenues] = await Promise.all([
+      prisma.$queryRawUnsafe<{ day: string; cnt: bigint }[]>(
+        `SELECT "createdAt"::date::text AS day, COUNT(*)::bigint AS cnt
+         FROM bookings
+         WHERE "createdAt" >= $1::timestamp
+         GROUP BY day ORDER BY day`,
+        weekStart,
+      ),
+      prisma.$queryRawUnsafe<{ day: string; total: number }[]>(
+        `SELECT "endDate"::date::text AS day, COALESCE(SUM("totalPrice"), 0) AS total
+         FROM bookings
+         WHERE status IN ('CONFIRMED','ONGOING','COMPLETED')
+           AND "endDate" >= $1::timestamp
+         GROUP BY day ORDER BY day`,
+        weekStart,
+      ),
+      prisma.$queryRawUnsafe<{ month: string; cnt: bigint }[]>(
+        `SELECT to_char("createdAt"::date, 'YYYY-MM') AS month, COUNT(*)::bigint AS cnt
+         FROM bookings
+         WHERE "createdAt" >= $1::timestamp AND "createdAt" < $2::timestamp
+         GROUP BY month ORDER BY month`,
+        yStart,
+        yEnd,
+      ),
+      prisma.$queryRawUnsafe<{ month: string; total: number }[]>(
+        `SELECT to_char("endDate"::date, 'YYYY-MM') AS month, COALESCE(SUM("totalPrice"), 0) AS total
+         FROM bookings
+         WHERE status IN ('CONFIRMED','ONGOING','COMPLETED')
+           AND "endDate" >= $1::timestamp AND "endDate" < $2::timestamp
+         GROUP BY month ORDER BY month`,
+        yStart,
+        yEnd,
+      ),
+    ]);
+
+    for (const row of dailyCounts) {
+      const w = weekMap.get(row.day);
+      if (w) w.bookings = Number(row.cnt);
+      const m = monthMap.get(row.day);
+      if (m) m.bookings = Number(row.cnt);
+    }
+    for (const row of dailyRevenues) {
+      const w = weekMap.get(row.day);
+      if (w) w.revenue = row.total;
+      const m = monthMap.get(row.day);
+      if (m) m.revenue = row.total;
+    }
+    for (const row of yCounts) {
+      const key = row.month + "-01";
+      const p = yMap.get(key);
+      if (p) p.bookings = Number(row.cnt);
+    }
+    for (const row of yRevenues) {
+      const key = row.month + "-01";
+      const p = yMap.get(key);
+      if (p) p.revenue = row.total;
+    }
+
+    return {
+      weekly: [...weekMap.values()],
+      monthly: [...monthMap.values()],
+      yearly: [...yMap.values()],
+    };
   },
   ["admin-time-series"],
   { revalidate: 300, tags: ["time-series"] }
@@ -195,7 +231,17 @@ export default async function AdminDashboardPage({
       },
     }),
     prisma.booking.findMany({
-      include: { car: true },
+      select: {
+        id: true,
+        bookingCode: true,
+        customerName: true,
+        customerPhone: true,
+        startDate: true,
+        endDate: true,
+        totalPrice: true,
+        status: true,
+        car: { select: { name: true } },
+      },
       orderBy: { createdAt: "desc" },
       skip,
       take: pageSize,
