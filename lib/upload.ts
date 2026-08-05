@@ -1,25 +1,21 @@
-import fs from "fs/promises";
-import path from "path";
-import crypto from "crypto";
-
 // ---------------------------------------------------------------------------
-// Magic bytes → extension mapping for whitelisted image/PDF types
+// Magic bytes → extension mapping for whitelisted image types
 // ---------------------------------------------------------------------------
 const MAGIC_BYTES: Record<string, readonly number[]> = {
-  // JPEG: FF D8 FF
   ".jpg": [0xff, 0xd8, 0xff],
-  // PNG: 89 50 4E 47
   ".png": [0x89, 0x50, 0x4e, 0x47],
-  // WebP: 52 49 46 46 ?? ?? ?? ?? 57 45 42 50
   ".webp": [0x52, 0x49, 0x46, 0x46],
-  // PDF: 25 50 44 46
-  ".pdf": [0x25, 0x50, 0x44, 0x46],
+};
+
+const MIME_MAP: Record<string, string> = {
+  ".jpg": "image/jpeg",
+  ".png": "image/png",
+  ".webp": "image/webp",
 };
 
 function detectExtension(buffer: Buffer): string | null {
   for (const [ext, sig] of Object.entries(MAGIC_BYTES)) {
     if (sig.every((byte, i) => buffer[i] === byte)) {
-      // Extra check for WebP: bytes 8-11 must be "WEBP"
       if (ext === ".webp") {
         const webpTag = buffer.slice(8, 12).toString("ascii");
         if (webpTag !== "WEBP") continue;
@@ -36,37 +32,28 @@ function validateBuffer(buffer: Buffer): string | null {
 }
 
 // ---------------------------------------------------------------------------
-// Shared upload core
+// Convert file to base64 data URL (works on Vercel serverless, no filesystem needed)
 // ---------------------------------------------------------------------------
-async function saveUploadedFile(
-  file: File,
-  subdir: string,
-  prefix: string,
-): Promise<string | null> {
+async function fileToDataUrl(file: File): Promise<string | null> {
   if (!file || file.size === 0 || !file.name) return null;
 
   try {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Validate via magic bytes
     const ext = validateBuffer(buffer);
     if (!ext) {
-      console.error(`[UPLOAD REJECTED] Invalid magic bytes for ${prefix} upload, reported type: ${file.type}, name: ${file.name}`);
+      console.error(
+        `[UPLOAD REJECTED] Invalid magic bytes, reported type: ${file.type}, name: ${file.name}`,
+      );
       return null;
     }
 
-    const uploadDir = path.join(process.cwd(), "public", "uploads", subdir);
-    await fs.mkdir(uploadDir, { recursive: true });
-
-    // Always use random name + verified extension (ignores original filename)
-    const uniqueName = `${prefix}-${Date.now()}-${crypto.randomBytes(8).toString("hex")}${ext}`;
-    const filePath = path.join(uploadDir, uniqueName);
-
-    await fs.writeFile(filePath, buffer);
-    return `/uploads/${subdir}/${uniqueName}`;
+    const mime = MIME_MAP[ext] || file.type || "image/jpeg";
+    const base64 = buffer.toString("base64");
+    return `data:${mime};base64,${base64}`;
   } catch (error) {
-    console.error(`Error saving uploaded ${prefix} file:`, error);
+    console.error("Error converting file to data URL:", error);
     return null;
   }
 }
@@ -76,26 +63,17 @@ async function saveUploadedFile(
 // ---------------------------------------------------------------------------
 
 export async function uploadCarImage(file: File): Promise<string | null> {
-  return saveUploadedFile(file, "cars", "car");
+  return fileToDataUrl(file);
 }
 
 export async function uploadIdentityImage(file: File): Promise<string | null> {
-  return saveUploadedFile(file, "identities", "ktp");
+  return fileToDataUrl(file);
 }
 
 export async function uploadPaymentProofImage(file: File): Promise<string | null> {
-  return saveUploadedFile(file, "payments", "pay");
+  return fileToDataUrl(file);
 }
 
-export async function deleteCarImage(imageUrl: string): Promise<void> {
-  try {
-    const uploadDir = path.join(process.cwd(), "public", "uploads", "cars");
-    const resolved = path.resolve(process.cwd(), "public", imageUrl.replace(/^\//, ""));
-    if (path.dirname(resolved).toLowerCase() !== uploadDir.toLowerCase()) return;
-    await fs.unlink(resolved);
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code !== "ENOENT") {
-      console.error("Error deleting image:", error);
-    }
-  }
+export async function deleteCarImage(_imageUrl: string): Promise<void> {
+  // No-op: data URLs are stored inline, no external storage to clean up
 }
