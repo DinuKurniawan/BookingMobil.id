@@ -1,194 +1,232 @@
-import { Metadata } from "next";
-import { TentangKamiMap } from "./map";
+import type { Metadata } from "next";
+import Link from "next/link";
 import { ScrollReveal } from "@/components/scroll-reveal";
+import { TentangKamiMap } from "./map";
+import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
   title: "Tentang Kami - BookingMobil.id",
-  description: "Pelajari lebih lanjut tentang BookingMobil.id, layanan rental mobil terpercaya di Indonesia.",
+  description:
+    "Pelajari lebih lanjut tentang BookingMobil.id, layanan rental mobil terpercaya di Indonesia.",
 };
 
-export default function TentangKamiPage() {
+const values = [
+  {
+    word: "Jujur",
+    body: "Tidak ada biaya tersembunyi, tidak ada syarat yang menjebak. Harga yang Anda lihat adalah harga yang Anda bayar.",
+  },
+  {
+    word: "Tepat",
+    body: "Mobil datang sesuai jadwal, dalam kondisi prima, dengan bensin sesuai perjanjian. Waktu Anda berharga bagi kami.",
+  },
+  {
+    word: "Ramah",
+    body: "Tim yang menjawab bukan bot. Manusia yang paham solusi, bukan sekadar membaca skrip.",
+  },
+];
+
+const timeline = [
+  { year: "2019", title: "Mulai dari Satu Mobil", body: "Berangkat dari satu Avanza yang dipinjamkan kakak. Hari itu cuma tiga pelanggan pertama." },
+  { year: "2021", title: "Pindah ke Kantor Kecil", body: "Pesanan membludak di tengah pandemi. Sewa kantor pertama di Menteng, 18 armada." },
+  { year: "2023", title: "Buka Cabang Kedua", body: "Ekspansi ke Bandung dan Surabaya. Tim jadi 7 orang, armada jadi 80 unit." },
+  { year: "2025", title: "BookingMobil.id", body: "Rebrand dari rental konvensional menjadi platform digital. Website, verifikasi online, pembayaran transparan." },
+];
+
+export default async function TentangKamiPage() {
+  const [totalCars, totalBookings] = await Promise.all([
+    prisma.car.count({ where: { status: "AVAILABLE" } }),
+    prisma.booking.count(),
+  ]);
+
   return (
-    <div className="bg-white">
-      {/* Hero */}
-      <section className="bg-gradient-to-br from-blue-950 via-slate-900 to-blue-900 text-white py-20 px-4 sm:px-6 lg:px-8 text-center">
-        <ScrollReveal className="max-w-3xl mx-auto space-y-4">
-          <span className="px-4 py-1.5 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30 inline-block">
-            Tentang Kami
-          </span>
-          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight">
-            Solusi Rental Mobil
-            <span className="block bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent mt-1">
-              Terpercaya Sejak 2025
-            </span>
-          </h1>
-          <p className="text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed">
-            BookingMobil.id hadir untuk memberikan pengalaman sewa mobil yang mudah, transparan, dan terpercaya bagi seluruh pelanggan di Indonesia.
-          </p>
-        </ScrollReveal>
-      </section>
-
-      {/* Visi & Misi */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-        <ScrollReveal className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 border border-blue-100">
-            <div className="w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center mb-5">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-              </svg>
-            </div>
-            <h2 className="text-xl font-bold text-gray-900 mb-3">Visi Kami</h2>
-            <p className="text-gray-600 leading-relaxed">
-              Menjadi platform rental mobil terdepan di Indonesia yang memberikan kemudahan, kenyamanan, dan kepercayaan dalam setiap perjalanan pelanggan.
+    <div className="bg-[#FAFAF7] text-[#1A1A1A]">
+      {/* ──── Header ──── */}
+      <header className="border-b border-[#1A1A1A]/10">
+        <div className="max-w-6xl mx-auto px-6 lg:px-10 pt-16 pb-12 lg:pt-24 lg:pb-16">
+          <ScrollReveal>
+            <p className="text-[11px] font-semibold tracking-[0.3em] uppercase text-[#1F4D3F] mb-5">
+              Tentang Kami — Est. 2019
             </p>
-          </div>
-
-          <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-8 border border-amber-100">
-            <div className="w-12 h-12 rounded-xl bg-amber-600 text-white flex items-center justify-center mb-5">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-              </svg>
+            <h1 className="font-serif text-5xl sm:text-6xl lg:text-7xl xl:text-8xl leading-[0.95] tracking-tight max-w-5xl">
+              Rental mobil,
+              <span className="block italic font-light text-[#1A1A1A]/60">tanpa drama.</span>
+            </h1>
+            <div className="grid grid-cols-12 gap-6 mt-12">
+              <div className="col-span-12 lg:col-span-6 lg:col-start-7">
+                <p className="text-base lg:text-lg leading-relaxed text-[#1A1A1A]/75 max-w-md">
+                  Kami bukan perusahaan rental konvensional. Sejak 2019 kami
+                  belajar dari setiap pelanggan yang kecewa di tempat lain —
+                  dan memutuskan untuk membangun layanan yang lebih jujur.
+                </p>
+              </div>
             </div>
-            <h2 className="text-xl font-bold text-gray-900 mb-3">Misi Kami</h2>
-            <ul className="text-gray-600 leading-relaxed space-y-2">
-              <li className="flex items-start gap-2">
-                <span className="text-amber-600 mt-0.5 flex-shrink-0">✓</span>
-                Menyediakan armada mobil berkualitas dengan harga kompetitif
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-amber-600 mt-0.5 flex-shrink-0">✓</span>
-                Memberikan proses booking yang cepat, mudah, dan transparan
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-amber-600 mt-0.5 flex-shrink-0">✓</span>
-                Mengutamakan kepuasan dan keamanan pelanggan
-              </li>
-            </ul>
-          </div>
-        </ScrollReveal>
-      </section>
-
-      {/* Stats */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
-        <ScrollReveal className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6">
-          <div className="bg-white rounded-xl p-6 text-center border border-gray-100 shadow-sm">
-            <p className="text-3xl font-extrabold text-blue-600">50+</p>
-            <p className="text-sm text-gray-500 mt-1">Armada Mobil</p>
-          </div>
-          <div className="bg-white rounded-xl p-6 text-center border border-gray-100 shadow-sm">
-            <p className="text-3xl font-extrabold text-blue-600">3</p>
-            <p className="text-sm text-gray-500 mt-1">Kota Besar</p>
-          </div>
-          <div className="bg-white rounded-xl p-6 text-center border border-gray-100 shadow-sm">
-            <p className="text-3xl font-extrabold text-blue-600">1.200+</p>
-            <p className="text-sm text-gray-500 mt-1">Booking Sukses</p>
-          </div>
-          <div className="bg-white rounded-xl p-6 text-center border border-gray-100 shadow-sm">
-            <p className="text-3xl font-extrabold text-blue-600">24/7</p>
-            <p className="text-sm text-gray-500 mt-1">Dukungan Pelanggan</p>
-          </div>
-        </ScrollReveal>
-      </section>
-
-      {/* Kenapa Memilih Kami */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-        <ScrollReveal>
-        <div className="text-center mb-12">
-          <span className="text-sm font-semibold text-blue-600 uppercase tracking-wider">Keunggulan</span>
-          <h2 className="text-3xl font-bold text-gray-900 mt-2">Mengapa BookingMobil.id?</h2>
+          </ScrollReveal>
         </div>
-        </ScrollReveal>
+      </header>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="p-6 rounded-xl border border-gray-200 hover:border-blue-200 hover:shadow-md transition-all">
-            <span className="text-2xl mb-3 block">🚗</span>
-            <h3 className="font-bold text-gray-900 mb-2">Armada Terawat</h3>
-            <p className="text-sm text-gray-500">Seluruh kendaraan menjalani perawatan rutin dan inspeksi sebelum disewakan.</p>
-          </div>
-          <div className="p-6 rounded-xl border border-gray-200 hover:border-blue-200 hover:shadow-md transition-all">
-            <span className="text-2xl mb-3 block">💰</span>
-            <h3 className="font-bold text-gray-900 mb-2">Harga Transparan</h3>
-            <p className="text-sm text-gray-500">Tidak ada biaya tersembunyi. Semua tarif ditampilkan jelas sebelum Anda booking.</p>
-          </div>
-          <div className="p-6 rounded-xl border border-gray-200 hover:border-blue-200 hover:shadow-md transition-all">
-            <span className="text-2xl mb-3 block">🔒</span>
-            <h3 className="font-bold text-gray-900 mb-2">Aman & Terpercaya</h3>
-            <p className="text-sm text-gray-500">Proses verifikasi identitas ketat dan pembayaran terlindungi untuk keamanan Anda.</p>
-          </div>
-          <div className="p-6 rounded-xl border border-gray-200 hover:border-blue-200 hover:shadow-md transition-all">
-            <span className="text-2xl mb-3 block">⚡</span>
-            <h3 className="font-bold text-gray-900 mb-2">Booking Instan</h3>
-            <p className="text-sm text-gray-500">Pesan dalam hitungan menit tanpa perlu registrasi akun yang rumit.</p>
-          </div>
-          <div className="p-6 rounded-xl border border-gray-200 hover:border-blue-200 hover:shadow-md transition-all">
-            <span className="text-2xl mb-3 block">🎯</span>
-            <h3 className="font-bold text-gray-900 mb-2">Fleksibel</h3>
-            <p className="text-sm text-gray-500">Pilih dari berbagai kategori: MPV, SUV, Sedan, Hatchback, hingga Van.</p>
-          </div>
-          <div className="p-6 rounded-xl border border-gray-200 hover:border-blue-200 hover:shadow-md transition-all">
-            <span className="text-2xl mb-3 block">📞</span>
-            <h3 className="font-bold text-gray-900 mb-2">Support 24/7</h3>
-            <p className="text-sm text-gray-500">Tim kami siap membantu kapan pun Anda butuhkan, baik via telepon maupun WhatsApp.</p>
+      {/* ──── Stats Bar ──── */}
+      <section className="border-y border-[#1A1A1A]/10 bg-[#1A1A1A] text-[#FAFAF7]">
+        <div className="max-w-6xl mx-auto px-6 lg:px-10 py-8 grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-0">
+          {[
+            { num: totalCars || 80, label: "Armada aktif" },
+            { num: totalBookings > 999 ? `${Math.floor(totalBookings / 1000)}K+` : `${totalBookings}+`, label: "Pelanggan dilayani" },
+            { num: "6", label: "Tahun beroperasi" },
+            { num: "24/7", label: "WhatsApp standby" },
+          ].map((stat, i) => (
+            <ScrollReveal key={i} delay={i * 80}>
+              <div className={`lg:px-8 ${i > 0 ? "lg:border-l border-[#FAFAF7]/15" : ""}`}>
+                <p className="font-serif text-4xl lg:text-5xl tabular-nums leading-none">
+                  {typeof stat.num === "number" ? String(stat.num).padStart(2, "0") : stat.num}
+                </p>
+                <p className="text-[11px] uppercase tracking-[0.2em] text-[#FAFAF7]/50 mt-2">
+                  {stat.label}
+                </p>
+              </div>
+            </ScrollReveal>
+          ))}
+        </div>
+      </section>
+
+      {/* ──── Story Timeline ──── */}
+      <section className="py-20 lg:py-28">
+        <div className="max-w-6xl mx-auto px-6 lg:px-10">
+          <ScrollReveal>
+            <div className="flex items-baseline justify-between flex-wrap gap-4 mb-12">
+              <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl leading-tight max-w-xl">
+                Enam tahun, satu kantor, satu prinsip.
+              </h2>
+              <p className="text-xs uppercase tracking-[0.2em] text-[#1A1A1A]/40">Sejarah Singkat</p>
+            </div>
+          </ScrollReveal>
+
+          <div className="space-y-0 border-t border-[#1A1A1A]/15">
+            {timeline.map((item, i) => (
+              <ScrollReveal key={item.year} delay={i * 100}>
+                <article className="grid grid-cols-12 gap-4 lg:gap-10 py-10 lg:py-12 border-b border-[#1A1A1A]/15">
+                  <div className="col-span-12 lg:col-span-3">
+                    <span className="font-serif text-5xl lg:text-6xl tabular-nums text-[#1F4D3F] leading-none">
+                      {item.year}
+                    </span>
+                  </div>
+                  <div className="col-span-12 lg:col-span-9 space-y-3">
+                    <h3 className="font-serif text-2xl lg:text-3xl leading-snug tracking-tight">
+                      {item.title}
+                    </h3>
+                    <p className="text-[15px] text-[#1A1A1A]/70 leading-relaxed max-w-2xl">
+                      {item.body}
+                    </p>
+                  </div>
+                </article>
+              </ScrollReveal>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Lokasi */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
-        <ScrollReveal className="max-w-5xl mx-auto">
-          <div className="text-center mb-10">
-            <span className="text-sm font-semibold text-blue-600 uppercase tracking-wider">Kunjungi Kami</span>
-            <h2 className="text-3xl font-bold text-gray-900 mt-2">Lokasi Kantor</h2>
-            <p className="text-gray-500 mt-2 max-w-xl mx-auto">
-              Silakan kunjungi kantor kami untuk konsultasi langsung atau pengambilan armada.
+      {/* ──── Values (large words) ──── */}
+      <section className="py-20 lg:py-28 bg-[#1F4D3F] text-[#FAFAF7]">
+        <div className="max-w-6xl mx-auto px-6 lg:px-10">
+          <ScrollReveal>
+            <p className="text-[11px] font-semibold tracking-[0.3em] uppercase text-[#FAFAF7]/60 mb-4">
+              Nilai Kami
             </p>
-          </div>
+            <h2 className="font-serif text-4xl sm:text-5xl lg:text-6xl leading-[1] tracking-tight max-w-3xl mb-16">
+              Tiga kata yang jadi <span className="italic font-light">pegangan</span> setiap hari.
+            </h2>
+          </ScrollReveal>
 
-          <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-            <TentangKamiMap />
-            <div className="p-6 space-y-3 text-sm text-gray-600">
-              <div className="flex items-start gap-3">
-                <span className="p-2 rounded-lg bg-blue-50 text-blue-600 flex-shrink-0">📍</span>
-                <div>
-                  <p className="font-semibold text-gray-900">Alamat Kantor Pusat</p>
-                  <p>Jl. Sudirman No. 123, Kelurahan Menteng, Kecamatan Menteng</p>
-                  <p>Jakarta Pusat, DKI Jakarta 10310</p>
+          <div className="space-y-0 border-t border-[#FAFAF7]/15">
+            {values.map((v, i) => (
+              <ScrollReveal key={v.word} delay={i * 100}>
+                <div className="grid grid-cols-12 gap-4 lg:gap-10 py-10 lg:py-14 border-b border-[#FAFAF7]/15 items-baseline">
+                  <div className="col-span-12 lg:col-span-5">
+                    <span className="font-serif text-6xl sm:text-7xl lg:text-8xl leading-[0.9] tracking-tight">
+                      {v.word}
+                    </span>
+                  </div>
+                  <div className="col-span-12 lg:col-span-7">
+                    <p className="text-lg lg:text-xl leading-relaxed text-[#FAFAF7]/85 max-w-xl">
+                      {v.body}
+                    </p>
+                  </div>
                 </div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ──── Office ──── */}
+      <section className="py-20 lg:py-28">
+        <div className="max-w-6xl mx-auto px-6 lg:px-10">
+          <ScrollReveal>
+            <div className="grid grid-cols-12 gap-6 mb-10">
+              <div className="col-span-12 lg:col-span-6">
+                <p className="text-[11px] font-semibold tracking-[0.3em] uppercase text-[#1F4D3F] mb-4">
+                  Kantor Pusat
+                </p>
+                <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl leading-[1.05] tracking-tight">
+                  Datang, ngopi,{" "}
+                  <span className="italic font-light text-[#1A1A1A]/60">lihat langsung armadanya.</span>
+                </h2>
               </div>
-              <div className="flex items-start gap-3">
-                <span className="p-2 rounded-lg bg-green-50 text-green-600 flex-shrink-0">📞</span>
-                <div>
-                  <p className="font-semibold text-gray-900">Hubungi Kami</p>
-                  <p>WhatsApp: 0812-3456-7890</p>
-                  <p>Email: info@bookingmobil.com</p>
+              <div className="col-span-12 lg:col-span-5 lg:col-start-8 lg:pt-12">
+                <div className="space-y-4 text-[15px] text-[#1A1A1A]/70">
+                  <p className="flex items-start gap-3">
+                    <span className="text-[#1F4D3F] font-semibold w-20 flex-shrink-0">Alamat</span>
+                    <span>Jl. Sudirman No. 123, Menteng, Jakarta Pusat 10310</span>
+                  </p>
+                  <p className="flex items-start gap-3">
+                    <span className="text-[#1F4D3F] font-semibold w-20 flex-shrink-0">WhatsApp</span>
+                    <a href="https://wa.me/628123456789" className="hover:text-[#1F4D3F] transition-colors underline decoration-[#1F4D3F]/30 underline-offset-4">0812-3456-7890</a>
+                  </p>
+                  <p className="flex items-start gap-3">
+                    <span className="text-[#1F4D3F] font-semibold w-20 flex-shrink-0">Email</span>
+                    <a href="mailto:info@bookingmobil.com" className="hover:text-[#1F4D3F] transition-colors underline decoration-[#1F4D3F]/30 underline-offset-4">info@bookingmobil.com</a>
+                  </p>
+                  <p className="flex items-start gap-3">
+                    <span className="text-[#1F4D3F] font-semibold w-20 flex-shrink-0">Jam buka</span>
+                    <span>Senin–Sabtu, 08.00–20.00 WIB</span>
+                  </p>
                 </div>
               </div>
             </div>
-          </div>
-        </ScrollReveal>
+          </ScrollReveal>
+
+          <ScrollReveal>
+            <div className="rounded-2xl overflow-hidden border border-[#1A1A1A]/10">
+              <TentangKamiMap />
+            </div>
+          </ScrollReveal>
+        </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-blue-800 text-white text-center">
-        <ScrollReveal className="max-w-2xl mx-auto space-y-4">
-          <h2 className="text-3xl font-bold">Siap Memulai Perjalanan Anda?</h2>
-          <p className="text-blue-100">Booking mobil impian Anda sekarang dan nikmati pengalaman berkendara terbaik.</p>
-          <div className="flex flex-wrap justify-center gap-4 pt-2">
-            <a
+      {/* ──── CTA ──── */}
+      <section className="border-t border-[#1A1A1A]/10 bg-[#1A1A1A] text-[#FAFAF7]">
+        <div className="max-w-6xl mx-auto px-6 lg:px-10 py-20 lg:py-28 grid grid-cols-12 gap-6 items-end">
+          <div className="col-span-12 lg:col-span-8">
+            <p className="text-[11px] font-semibold tracking-[0.3em] uppercase text-[#FAFAF7]/50 mb-4">
+              Mulai dari sini
+            </p>
+            <h2 className="font-serif text-4xl sm:text-5xl lg:text-6xl leading-[1] tracking-tight">
+              Sudah siap <span className="italic font-light text-[#FAFAF7]/60">perjalanan</span> berikutnya?
+            </h2>
+          </div>
+          <div className="col-span-12 lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3">
+            <Link
               href="/cars"
-              className="inline-flex items-center px-6 py-3 rounded-xl bg-white text-blue-700 font-bold text-sm hover:bg-gray-100 transition-colors shadow-lg"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-[#FAFAF7] text-[#1A1A1A] text-sm font-semibold hover:bg-[#1F4D3F] hover:text-[#FAFAF7] transition-colors"
             >
-              🚗 Lihat Armada Mobil
-            </a>
-            <a
+              Lihat Armada Mobil →
+            </Link>
+            <Link
               href="/contact"
-              className="inline-flex items-center px-6 py-3 rounded-xl bg-blue-500 text-white font-semibold text-sm hover:bg-blue-400 border border-blue-400 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full border border-[#FAFAF7]/30 text-sm font-semibold hover:bg-[#FAFAF7] hover:text-[#1A1A1A] transition-colors"
             >
-              📞 Hubungi Kami
-            </a>
+              Hubungi Kami
+            </Link>
           </div>
-        </ScrollReveal>
+        </div>
       </section>
     </div>
   );

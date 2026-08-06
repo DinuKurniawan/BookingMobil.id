@@ -3,7 +3,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import { cekBookingSchema } from "@/lib/validations/cek-booking";
-import { Button } from "@/components/ui/button";
 import { BookingStatusTimeline } from "@/components/booking-status-timeline";
 import { CopyButton } from "@/components/copy-button";
 import { ScrollReveal } from "@/components/scroll-reveal";
@@ -22,22 +21,18 @@ type Props = {
   searchParams: Promise<{ bookingCode?: string; identity?: string; email?: string; phone?: string }>;
 };
 
-const STATUS_BADGES: Record<
-  string,
-  { label: string; bgClass: string }
-> = {
-  PENDING: { label: "Menunggu Pembayaran", bgClass: "bg-amber-100 text-amber-800 border-amber-200" },
-  PAYMENT_REVIEW: { label: "Verifikasi Admin", bgClass: "bg-blue-100 text-blue-800 border-blue-200" },
-  CONFIRMED: { label: "Pemesanan Terkonfirmasi", bgClass: "bg-emerald-100 text-emerald-800 border-emerald-200" },
-  ONGOING: { label: "Sewa Berlangsung", bgClass: "bg-purple-100 text-purple-800 border-purple-200" },
-  COMPLETED: { label: "Sewa Selesai", bgClass: "bg-slate-200 text-slate-700 border-slate-300" },
-  CANCELLED: { label: "Dibatalkan", bgClass: "bg-red-100 text-red-800 border-red-200" },
-  REJECTED: { label: "Pembayaran Ditolak", bgClass: "bg-red-100 text-red-800 border-red-200" },
+const STATUS_LABELS: Record<string, string> = {
+  PENDING: "Menunggu Pembayaran",
+  PAYMENT_REVIEW: "Verifikasi Admin",
+  CONFIRMED: "Terkonfirmasi",
+  ONGOING: "Sewa Berlangsung",
+  COMPLETED: "Sewa Selesai",
+  CANCELLED: "Dibatalkan",
+  REJECTED: "Pembayaran Ditolak",
 };
 
-function formatDateID(date: Date) {
+function formatDateShort(date: Date) {
   return new Date(date).toLocaleDateString("id-ID", {
-    weekday: "short",
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -103,240 +98,259 @@ export default async function CekBookingPage({ searchParams }: Props) {
   }
 
   return (
-    <div className="py-10 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto w-full space-y-8">
-      {/* Breadcrumb */}
-      <ScrollReveal>
-        <nav className="flex items-center gap-2 text-xs text-slate-500">
-          <Link href="/" className="hover:text-blue-600 transition-colors">
-            Beranda
-          </Link>
-          <span>/</span>
-          <span className="text-slate-900 font-medium">Cek Status Booking</span>
-        </nav>
-      </ScrollReveal>
-
-      {/* Header Banner */}
-      <ScrollReveal delay={100}>
-      <div className="bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white p-8 sm:p-10 rounded-3xl shadow-xl space-y-6 relative overflow-hidden">
-        <div className="relative z-10 max-w-2xl space-y-2">
-          <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30 inline-block mb-1">
-            🔒 Lacak Pesanan Terverifikasi
-          </span>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-            Cek Status Pemesanan
-          </h1>
-          <p className="text-slate-300 text-sm leading-relaxed">
-            Demi keamanan data pribadi, lacak pesanan membutuhkan kombinasi yang cocok antara <strong>Kode Booking</strong> serta <strong>Email atau Nomor HP</strong> yang terdaftar saat pemesanan.
-          </p>
+    <div className="bg-[#FAFAF7] text-[#1A1A1A] min-h-screen">
+      {/* ──── Header ──── */}
+      <header className="border-b border-[#1A1A1A]/10">
+        <div className="max-w-4xl mx-auto px-6 lg:px-10 pt-14 pb-10 lg:pt-20 lg:pb-12">
+          <ScrollReveal>
+            <nav className="text-[11px] uppercase tracking-[0.2em] text-[#1A1A1A]/40 mb-8">
+              <Link href="/" className="hover:text-[#1A1A1A] transition-colors">Beranda</Link>
+              <span className="mx-2">/</span>
+              <span className="text-[#1A1A1A]">Cek Status Booking</span>
+            </nav>
+            <p className="text-[11px] font-semibold tracking-[0.3em] uppercase text-[#1F4D3F] mb-4">
+              Verifikasi Pesanan
+            </p>
+            <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl leading-[1] tracking-tight">
+              Lacak status
+              <span className="block italic font-light text-[#1A1A1A]/60">pesanan Anda.</span>
+            </h1>
+          </ScrollReveal>
         </div>
+      </header>
 
-        {/* Dual Search Input Form */}
-        <form action="/cek-booking" method="GET" className="relative z-10 space-y-3 pt-2">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-white/10 backdrop-blur-md p-3 rounded-2xl border border-white/20">
-            {/* Input 1: Kode Booking */}
-            <div>
-              <label htmlFor="bookingCode" className="block text-xs font-semibold text-blue-200 mb-1">
-                Kode Booking <span className="text-red-400">*</span>
-              </label>
-              <input
-                id="bookingCode"
-                type="text"
-                name="bookingCode"
-                defaultValue={bookingCodeInput}
-                placeholder="Contoh: BK-20260804-A9F"
-                required
-                className="w-full px-4 py-3 rounded-xl bg-white text-slate-900 text-sm placeholder:text-slate-400 outline-none font-medium focus:ring-2 focus:ring-blue-500 transition-all"
-              />
-            </div>
+      {/* ──── Verification Form ──── */}
+      <section className="border-b border-[#1A1A1A]/10">
+        <div className="max-w-4xl mx-auto px-6 lg:px-10 py-12 lg:py-16">
+          <ScrollReveal>
+            <p className="text-[15px] text-[#1A1A1A]/70 leading-relaxed max-w-xl mb-8">
+              Masukkan Kode Booking dan Email atau Nomor HP yang Anda gunakan saat pemesanan. Kedua data harus cocok untuk menampilkan detail pesanan.
+            </p>
 
-            {/* Input 2: Email atau No HP */}
-            <div>
-              <label htmlFor="identity" className="block text-xs font-semibold text-blue-200 mb-1">
-                Email atau No. HP Terdaftar <span className="text-red-400">*</span>
-              </label>
-              <input
-                id="identity"
-                type="text"
-                name="identity"
-                defaultValue={identityInput}
-                placeholder="nama@email.com / 081234567890"
-                required
-                className="w-full px-4 py-3 rounded-xl bg-white text-slate-900 text-sm placeholder:text-slate-400 outline-none font-medium focus:ring-2 focus:ring-blue-500 transition-all"
-              />
-            </div>
-          </div>
+            <form action="/cek-booking" method="GET" className="space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-[#1A1A1A]/10 border border-[#1A1A1A]/10 rounded-2xl overflow-hidden">
+                <div className="bg-[#FAFAF7] p-5">
+                  <label htmlFor="bookingCode" className="block text-[10px] font-bold uppercase tracking-[0.2em] text-[#1A1A1A]/50 mb-2">
+                    01 / Kode Booking
+                  </label>
+                  <input
+                    id="bookingCode"
+                    type="text"
+                    name="bookingCode"
+                    defaultValue={bookingCodeInput}
+                    placeholder="BK-20260804-A9F"
+                    required
+                    className="w-full bg-transparent text-lg font-medium text-[#1A1A1A] placeholder:text-[#1A1A1A]/25 outline-none font-mono"
+                  />
+                </div>
 
-          <div className="flex justify-end">
-            <Button
-              type="submit"
-              size="lg"
-              className="w-full sm:w-auto px-8 py-3.5 bg-blue-600 hover:bg-blue-500 font-bold text-sm shadow-lg shadow-blue-600/40"
-            >
-              🔒 Verifikasi &amp; Lacak Pesanan
-            </Button>
-          </div>
-        </form>
-      </div>
-      </ScrollReveal>
+                <div className="bg-[#FAFAF7] p-5">
+                  <label htmlFor="identity" className="block text-[10px] font-bold uppercase tracking-[0.2em] text-[#1A1A1A]/50 mb-2">
+                    02 / Email atau No. HP
+                  </label>
+                  <input
+                    id="identity"
+                    type="text"
+                    name="identity"
+                    defaultValue={identityInput}
+                    placeholder="nama@email.com / 081234567890"
+                    required
+                    className="w-full bg-transparent text-lg font-medium text-[#1A1A1A] placeholder:text-[#1A1A1A]/25 outline-none"
+                  />
+                </div>
+              </div>
 
-      {/* Validation Error Alert */}
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <p className="text-xs text-[#1A1A1A]/50">
+                  Kode pemesanan dikirim via email setelah booking.
+                </p>
+                <button
+                  type="submit"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#1A1A1A] text-[#FAFAF7] text-sm font-semibold hover:bg-[#1F4D3F] transition-colors"
+                >
+                  Verifikasi & Lacak
+                  <span>→</span>
+                </button>
+              </div>
+            </form>
+          </ScrollReveal>
+        </div>
+      </section>
+
       {validationError && (
-        <ScrollReveal>
-          <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-medium flex items-center gap-3">
-            <svg className="w-5 h-5 text-amber-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
-            <span>{validationError}</span>
+        <section className="border-b border-[#1A1A1A]/10">
+          <div className="max-w-4xl mx-auto px-6 lg:px-10 py-8">
+            <div className="flex items-start gap-4 border-l-2 border-amber-600 pl-5 py-3">
+              <span className="text-2xl font-serif text-amber-600 leading-none">!</span>
+              <p className="text-sm text-[#1A1A1A]/80 leading-relaxed">{validationError}</p>
+            </div>
           </div>
-        </ScrollReveal>
+        </section>
       )}
 
-      {/* SEARCH RESULTS SECTION */}
       {searched && !validationError && (
-        <div className="space-y-6">
-          <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-            <h2 className="text-xl font-bold text-slate-900">
-              Hasil Verifikasi ({bookings.length})
-            </h2>
-            <span className="text-xs text-slate-500">
-              Kode: <strong className="text-slate-800 font-mono">{bookingCodeInput}</strong> • Identitas: <strong className="text-slate-800">{identityInput}</strong>
-            </span>
-          </div>
+        <section className="border-b border-[#1A1A1A]/10">
+          <div className="max-w-4xl mx-auto px-6 lg:px-10 py-10 lg:py-14">
+            <div className="flex items-baseline justify-between flex-wrap gap-2 mb-10 pb-4 border-b border-[#1A1A1A]/10">
+              <p className="text-[11px] uppercase tracking-[0.2em] text-[#1A1A1A]/50">
+                Hasil verifikasi — {bookings.length} pesanan ditemukan
+              </p>
+              <p className="text-[11px] font-mono text-[#1A1A1A]/50">
+                {bookingCodeInput} • {identityInput}
+              </p>
+            </div>
 
-          {bookings.length === 0 ? (
-            <div className="bg-white rounded-2xl border border-slate-200/80 p-8 sm:p-12 text-center space-y-4 shadow-xs">
-              <div className="w-16 h-16 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-3xl mx-auto">
-                🔒
-              </div>
-              <div className="space-y-1">
-                <h3 className="text-lg font-bold text-slate-900">
-                  Data Pemesanan Tidak Cocok
-                </h3>
-                <p className="text-slate-500 text-xs max-w-md mx-auto">
-                  Kombinasi Kode Booking <strong>{bookingCodeInput}</strong> dan Email/No HP <strong>{identityInput}</strong> tidak cocok dengan data pemesanan mana pun di sistem kami.
+            {bookings.length === 0 ? (
+              <div className="py-16 text-center">
+                <p className="font-serif text-3xl italic text-[#1A1A1A]/70 mb-3">
+                  Tidak ada yang cocok.
                 </p>
-              </div>
-              <div className="pt-2">
-                <Link href="/cars">
-                  <Button variant="outline" size="sm" className="text-xs font-semibold">
-                    Lihat Armada Mobil
-                  </Button>
+                <p className="text-sm text-[#1A1A1A]/60 max-w-md mx-auto mb-8">
+                  Kombinasi Kode Booking <strong>{bookingCodeInput}</strong> dan Email/No HP tidak cocok dengan data pesanan manapun.
+                </p>
+                <Link
+                  href="/contact"
+                  className="text-sm font-semibold text-[#1F4D3F] hover:underline underline-offset-4 decoration-[#1F4D3F]/30"
+                >
+                  Hubungi kami jika butuh bantuan →
                 </Link>
               </div>
-            </div>
-          ) : (
-            <div className="space-y-8">
-              {bookings.map((booking) => {
-                const car = booking.car;
-                const totalPriceNum = booking.totalPrice.toNumber();
-                const badgeInfo =
-                  STATUS_BADGES[booking.status] || STATUS_BADGES.PENDING;
+            ) : (
+              <div className="space-y-16">
+                {bookings.map((booking, idx) => {
+                  const car = booking.car;
+                  const totalPriceNum = booking.totalPrice.toNumber();
+                  const statusLabel = STATUS_LABELS[booking.status] || booking.status;
 
-                return (
-                  <div
-                    key={booking.id}
-                    className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 shadow-sm space-y-6 hover:shadow-md transition-all"
-                  >
-                    {/* Header: Code & Status */}
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
-                      <div>
-                        <span className="text-xs text-slate-400 block font-medium">
-                          Kode Pemesanan
-                        </span>
-                        <div className="flex items-center gap-2 mt-0.5">
-                          <span className="text-xl sm:text-2xl font-black text-blue-700 font-mono">
-                            {booking.bookingCode}
+                  return (
+                    <article key={booking.id} className="space-y-8">
+                      <div className="grid grid-cols-12 gap-4 items-baseline">
+                        <div className="col-span-2">
+                          <span className="font-serif text-3xl lg:text-4xl text-[#1A1A1A]/30 tabular-nums">
+                            {String(idx + 1).padStart(2, "0")}
                           </span>
-                          <CopyButton textToCopy={booking.bookingCode} />
                         </div>
-                      </div>
-
-                      <div className="flex items-center gap-3">
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-bold border ${badgeInfo.bgClass}`}
-                        >
-                          {badgeInfo.label}
-                        </span>
-                        <span className="text-xs text-slate-400">
-                          {new Date(booking.createdAt).toLocaleDateString("id-ID", {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          })}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Visual Status Timeline Progress */}
-                    <div className="bg-slate-50/70 p-4 rounded-2xl border border-slate-100">
-                      <span className="text-xs font-bold text-slate-700 mb-2 block uppercase tracking-wider">
-                        Progress Status Pemesanan
-                      </span>
-                      <BookingStatusTimeline status={booking.status} />
-                    </div>
-
-                    {/* Car & Booking Summary Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-2">
-                      {/* Car Details */}
-                      <div className="sm:col-span-2 flex flex-col sm:flex-row items-center gap-4">
-                        <div className="w-full sm:w-36 h-24 rounded-xl overflow-hidden bg-slate-100 flex-shrink-0">
-                          {car?.images[0] ? (
-                            <Image
-                              src={car.images[0]}
-                              alt={car.name}
-                              width={144}
-                              height={96}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-slate-300">
-                              🚗
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="space-y-1 w-full text-left">
-                          <div className="flex items-center gap-2">
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">
-                              {car ? CAR_CATEGORY_LABELS[car.category as keyof typeof CAR_CATEGORY_LABELS] : "-"}
+                        <div className="col-span-10">
+                          <p className="text-[11px] uppercase tracking-[0.2em] text-[#1A1A1A]/50 mb-1">
+                            Kode Pemesanan
+                          </p>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-mono text-2xl lg:text-3xl font-bold text-[#1A1A1A]">
+                              {booking.bookingCode}
                             </span>
-                            <span className="text-xs text-slate-400">{car?.brand}</span>
+                            <CopyButton textToCopy={booking.bookingCode} />
                           </div>
-                          <h3 className="text-base font-bold text-slate-900">{car?.name}</h3>
-                          <p className="text-xs text-slate-500">
-                            {formatDateID(booking.startDate)} s/d {formatDateID(booking.endDate)} ({booking.totalDays} Hari)
-                          </p>
-                          <p className="text-xs text-slate-500">
-                            Pemesan: <strong className="text-slate-800">{booking.customerName}</strong> ({booking.customerPhone})
-                          </p>
                         </div>
                       </div>
 
-                      {/* Total Price & Action Button */}
-                      <div className="flex flex-col justify-between items-start sm:items-end border-t sm:border-t-0 pt-4 sm:pt-0 border-slate-100">
-                        <div className="text-left sm:text-right">
-                          <span className="text-xs text-slate-400 block">Total Tagihan</span>
-                          <span className="text-2xl font-black text-blue-600 font-mono">
-                            {formatCurrency(totalPriceNum)}
-                          </span>
+                      <div className="border-y border-[#1A1A1A]/10 py-8">
+                        <div className="grid grid-cols-12 gap-4 items-end">
+                          <div className="col-span-12 lg:col-span-7">
+                            <p className="text-[10px] uppercase tracking-[0.2em] text-[#1A1A1A]/50 mb-2">
+                              Status saat ini
+                            </p>
+                            <p className="font-serif text-4xl lg:text-5xl leading-none tracking-tight">
+                              {statusLabel}
+                            </p>
+                          </div>
+                          <div className="col-span-12 lg:col-span-5 lg:text-right">
+                            <p className="text-[10px] uppercase tracking-[0.2em] text-[#1A1A1A]/50 mb-1">
+                              Total Tagihan
+                            </p>
+                            <p className="font-serif text-3xl lg:text-4xl tabular-nums leading-none">
+                              {formatCurrency(totalPriceNum)}
+                            </p>
+                          </div>
                         </div>
 
+                        <div className="mt-8">
+                          <BookingStatusTimeline status={booking.status} />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-12 gap-6 lg:gap-10">
+                        <div className="col-span-12 sm:col-span-5">
+                          <div className="relative aspect-[16/10] bg-[#1A1A1A]/5 overflow-hidden rounded-lg">
+                            {car?.images[0] ? (
+                              <Image
+                                src={car.images[0]}
+                                alt={car.name}
+                                fill
+                                sizes="(max-width: 640px) 100vw, 40vw"
+                                className="object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-[#1A1A1A]/15">
+                                <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25" />
+                                </svg>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="col-span-12 sm:col-span-7 space-y-6">
+                          <div>
+                            <p className="text-[10px] uppercase tracking-[0.2em] text-[#1A1A1A]/50 mb-1">
+                              Mobil
+                            </p>
+                            <p className="text-[11px] font-semibold tracking-[0.15em] uppercase text-[#1F4D3F] mb-1">
+                              {car?.brand}
+                            </p>
+                            <h3 className="font-serif text-2xl lg:text-3xl leading-tight tracking-tight">
+                              {car?.name}
+                            </h3>
+                            <p className="text-xs text-[#1A1A1A]/60 mt-1">
+                              {car ? CAR_CATEGORY_LABELS[car.category as keyof typeof CAR_CATEGORY_LABELS] : "-"}
+                            </p>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-x-6 gap-y-4 text-sm">
+                            <div>
+                              <p className="text-[10px] uppercase tracking-[0.2em] text-[#1A1A1A]/50 mb-1">Mulai</p>
+                              <p className="text-[#1A1A1A]">{formatDateShort(booking.startDate)}</p>
+                            </div>
+                            <div>
+                              <p className="text-[10px] uppercase tracking-[0.2em] text-[#1A1A1A]/50 mb-1">Selesai</p>
+                              <p className="text-[#1A1A1A]">{formatDateShort(booking.endDate)}</p>
+                            </div>
+                            <div>
+                              <p className="text-[10px] uppercase tracking-[0.2em] text-[#1A1A1A]/50 mb-1">Durasi</p>
+                              <p className="text-[#1A1A1A] tabular-nums">{booking.totalDays} hari</p>
+                            </div>
+                            <div>
+                              <p className="text-[10px] uppercase tracking-[0.2em] text-[#1A1A1A]/50 mb-1">Dipesan</p>
+                              <p className="text-[#1A1A1A]">{formatDateShort(booking.createdAt)}</p>
+                            </div>
+                          </div>
+
+                          <div className="pt-4 border-t border-[#1A1A1A]/10">
+                            <p className="text-[10px] uppercase tracking-[0.2em] text-[#1A1A1A]/50 mb-1">
+                              Pemesan
+                            </p>
+                            <p className="text-[#1A1A1A]">
+                              <strong>{booking.customerName}</strong> · {booking.customerPhone}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex justify-end pt-4 border-t border-[#1A1A1A]/10">
                         <Link
                           href={`/booking/${booking.bookingCode}?email=${encodeURIComponent(booking.customerEmail)}`}
-                          className="mt-3 w-full sm:w-auto"
+                          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#1A1A1A] text-[#FAFAF7] text-sm font-semibold hover:bg-[#1F4D3F] transition-colors"
                         >
-                          <Button className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-xs font-bold px-4 py-2.5 shadow-xs">
-                            Detail &amp; Upload Bukti Pembayaran →
-                          </Button>
+                          Detail & Upload Bukti Pembayaran
+                          <span>→</span>
                         </Link>
                       </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
+                    </article>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </section>
       )}
     </div>
   );

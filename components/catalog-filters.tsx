@@ -89,7 +89,7 @@ export function CatalogFilters() {
           <input
             type="text"
             aria-label="Cari nama mobil"
-            placeholder='Cari mobil... (contoh: "Avanza", "Innova")'
+            placeholder="Cari mobil... contoh: Avanza"
             defaultValue={currentQuery}
             onChange={(e) => {
               const val = e.target.value;
@@ -119,17 +119,17 @@ export function CatalogFilters() {
         <div className="border-t border-gray-100" />
 
         {/* Row of filters */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5">
           {/* ── Kategori ───────────────────── */}
           <div>
-            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2.5">
+            <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-3">
               Kategori
             </h3>
             <div className="flex flex-wrap gap-1.5">
               <button
                 type="button"
                 onClick={() => updateFilter("category", "")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 border ${
+                className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all duration-200 border ${
                   !currentCategory
                     ? "bg-blue-600 text-white border-blue-600 shadow-sm shadow-blue-600/20"
                     : "bg-gray-50 text-gray-600 border-gray-200 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600"
@@ -142,7 +142,7 @@ export function CatalogFilters() {
                   type="button"
                   key={cat}
                   onClick={() => updateFilter("category", cat)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 border ${
+                  className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all duration-200 border ${
                     currentCategory === cat
                       ? "bg-blue-600 text-white border-blue-600 shadow-sm shadow-blue-600/20"
                       : "bg-gray-50 text-gray-600 border-gray-200 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600"
@@ -156,14 +156,14 @@ export function CatalogFilters() {
 
           {/* ── Transmisi ──────────────────── */}
           <div>
-            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2.5">
+            <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-3">
               Transmisi
             </h3>
             <div className="flex flex-wrap gap-1.5">
               <button
                 type="button"
                 onClick={() => updateFilter("transmission", "")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 border ${
+                className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all duration-200 border ${
                   !currentTransmission
                     ? "bg-blue-600 text-white border-blue-600 shadow-sm shadow-blue-600/20"
                     : "bg-gray-50 text-gray-600 border-gray-200 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600"
@@ -176,7 +176,7 @@ export function CatalogFilters() {
                   type="button"
                   key={t}
                   onClick={() => updateFilter("transmission", t)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 border ${
+                  className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all duration-200 border ${
                     currentTransmission === t
                       ? "bg-blue-600 text-white border-blue-600 shadow-sm shadow-blue-600/20"
                       : "bg-gray-50 text-gray-600 border-gray-200 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600"
@@ -188,10 +188,10 @@ export function CatalogFilters() {
             </div>
           </div>
 
-          {/* ── Range Harga ─────────────────── */}
-          <div>
-            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2.5">
-              Range Harga / Hari
+          {/* ── Harga / Hari ────────────────── */}
+          <div className="sm:col-span-2 lg:col-span-1">
+            <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-3 whitespace-nowrap">
+              Harga / Hari
             </h3>
             <div className="flex flex-wrap gap-1.5">
               {PRICE_PRESETS.map((preset, idx) => (
@@ -201,7 +201,7 @@ export function CatalogFilters() {
                   onClick={() =>
                     updateFilters({ minPrice: preset.min, maxPrice: preset.max })
                   }
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 border ${
+                  className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all duration-200 border ${
                     activePriceIdx === idx
                       ? "bg-blue-600 text-white border-blue-600 shadow-sm shadow-blue-600/20"
                       : "bg-gray-50 text-gray-600 border-gray-200 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600"
@@ -213,7 +213,7 @@ export function CatalogFilters() {
             </div>
 
             {/* Custom range inputs */}
-            <div className="flex items-center gap-2 mt-2.5">
+            <div className="flex items-center gap-2 mt-3">
               <input
                 type="number"
                 aria-label="Harga minimum"
