@@ -24,20 +24,17 @@ export function HeroSearchForm() {
   const today = new Date().toISOString().split("T")[0];
 
   const inputClass =
-    "w-full px-4 py-3 rounded-xl border border-[#1A1A1A]/15 bg-[#FAFAF7] text-sm text-[#1A1A1A] placeholder:text-[#1A1A1A]/35 focus:outline-none focus:border-[#1F4D3F] focus:ring-1 focus:ring-[#1F4D3F]/30 transition-all";
+    "w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm text-slate-900 placeholder:text-slate-400 shadow-sm focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500 transition-all";
 
   const selectClass =
-    `${inputClass} appearance-none cursor-pointer pr-10`;
+    "w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500 transition-all appearance-none cursor-pointer pr-10";
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex flex-col sm:flex-row items-stretch sm:items-end gap-3"
-    >
+    <form onSubmit={handleSubmit} className="space-y-4">
       <div className="flex-1 min-w-0">
         <label
           htmlFor="hero-category"
-          className="block text-[10px] font-bold uppercase tracking-[0.2em] text-[#1A1A1A]/50 mb-2"
+          className="block text-[10px] font-bold uppercase tracking-[0.2em] text-white/60 mb-2"
         >
           Kategori Mobil
         </label>
@@ -56,7 +53,7 @@ export function HeroSearchForm() {
             ))}
           </select>
           <svg
-            className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#1A1A1A]/40 pointer-events-none"
+            className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -71,43 +68,45 @@ export function HeroSearchForm() {
         </div>
       </div>
 
-      <div className="flex-1 min-w-0">
-        <label
-          htmlFor="hero-start"
-          className="block text-[10px] font-bold uppercase tracking-[0.2em] text-[#1A1A1A]/50 mb-2"
-        >
-          Tanggal Mulai
-        </label>
-        <input
-          id="hero-start"
-          type="date"
-          value={startDate}
-          min={today}
-          onChange={(e) => setStartDate(e.target.value)}
-          className={inputClass}
-        />
-      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="min-w-0">
+          <label
+            htmlFor="hero-start"
+            className="block text-[10px] font-bold uppercase tracking-[0.2em] text-white/60 mb-2"
+          >
+            Tanggal Mulai
+          </label>
+          <input
+            id="hero-start"
+            type="date"
+            value={startDate}
+            min={today}
+            onChange={(e) => setStartDate(e.target.value)}
+            className={inputClass}
+          />
+        </div>
 
-      <div className="flex-1 min-w-0">
-        <label
-          htmlFor="hero-end"
-          className="block text-[10px] font-bold uppercase tracking-[0.2em] text-[#1A1A1A]/50 mb-2"
-        >
-          Tanggal Selesai
-        </label>
-        <input
-          id="hero-end"
-          type="date"
-          value={endDate}
-          min={startDate || today}
-          onChange={(e) => setEndDate(e.target.value)}
-          className={inputClass}
-        />
+        <div className="min-w-0">
+          <label
+            htmlFor="hero-end"
+            className="block text-[10px] font-bold uppercase tracking-[0.2em] text-white/60 mb-2"
+          >
+            Tanggal Selesai
+          </label>
+          <input
+            id="hero-end"
+            type="date"
+            value={endDate}
+            min={startDate || today}
+            onChange={(e) => setEndDate(e.target.value)}
+            className={inputClass}
+          />
+        </div>
       </div>
 
       <button
         type="submit"
-        className="flex-shrink-0 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#1A1A1A] text-[#FAFAF7] text-sm font-semibold hover:bg-[#1F4D3F] transition-colors"
+        className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors active:scale-[0.98]"
       >
         <svg
           className="w-4 h-4"

@@ -1,7 +1,9 @@
 import Link from "next/link";
+import Image from "next/image";
 import { TestimonialCarousel } from "@/components/testimonial-carousel";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { HeroSearchForm } from "@/components/hero-search-form";
+import { BrandMarquee } from "@/components/brand-marquee";
 import { FleetGrid } from "@/components/fleet-grid";
 import { prisma } from "@/lib/prisma";
 
@@ -63,67 +65,158 @@ export default async function HomePage() {
 
   return (
     <div className="bg-[#FAFAF7] text-[#1A1A1A]">
-      <section className="border-b border-[#1A1A1A]/10">
-        <div className="max-w-6xl mx-auto px-6 lg:px-10 pt-12 pb-16 lg:pt-20 lg:pb-24">
-          <ScrollReveal>
-            <div className="flex items-center justify-between flex-wrap gap-4 mb-10 pb-4 border-b border-[#1A1A1A]/15">
-              <p className="text-[11px] font-semibold tracking-[0.3em] uppercase text-[#1F4D3F]">
-                Edisi Terbaru — 2025
-              </p>
-              <p className="text-[11px] uppercase tracking-[0.2em] text-[#1A1A1A]/40">
-                {new Date().toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
-              </p>
-            </div>
-          </ScrollReveal>
+      <section className="relative bg-black text-white border-b border-white/10">
+        <div className="flex flex-col lg:flex-row min-h-[560px]">
+          {/* Left Panel — Branding */}
+          <div className="relative bg-black text-white overflow-hidden lg:w-[55%]">
+            {/* Car background */}
+            <Image
+              src="/images/Toyota Fortuner 2_4L Vrz Trds A_T 2021.jpg"
+              alt="Toyota Fortuner armada kami"
+              fill
+              priority
+              sizes="55vw"
+              className="absolute inset-0 object-cover object-center opacity-40"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/70" />
+            {/* Grid pattern */}
+            <div
+              className="absolute inset-0 opacity-[0.08]"
+              style={{
+                backgroundImage:
+                  "linear-gradient(rgba(255,255,255,.4) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.4) 1px, transparent 1px)",
+                backgroundSize: "48px 48px",
+              }}
+            />
+            {/* Glow accents */}
+            <div className="absolute -top-32 -left-32 w-[34rem] h-[34rem] rounded-full bg-blue-500/20 blur-3xl" />
+            <div className="absolute -bottom-40 -right-24 w-[30rem] h-[30rem] rounded-full bg-indigo-500/15 blur-3xl" />
 
-          <div className="grid grid-cols-12 gap-6 lg:gap-10 items-end">
-            <div className="col-span-12 lg:col-span-9">
+            {/* Content */}
+            <div className="relative z-10 flex flex-col w-full max-w-xl mx-auto px-6 sm:px-14 py-14 lg:py-16 flex-1">
+              {/* Headline */}
               <ScrollReveal>
-                <h1 className="font-serif text-6xl sm:text-7xl lg:text-8xl xl:text-9xl leading-[0.9] tracking-tight">
-                  Rental mobil,
-                  <span className="block italic font-light text-[#1A1A1A]/60">bukan</span>
-                  <span className="block">drama.</span>
-                </h1>
+                <div className="mt-4 lg:mt-20">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 backdrop-blur-sm text-xs font-medium text-blue-100 mb-6">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                    Premium · Nyaman · Terpercaya
+                  </div>
+                  <h1 className="text-4xl lg:text-5xl xl:text-[3.4rem] font-bold tracking-tight leading-tight">
+                    Rental mobil,{" "}
+                    <span className="italic font-light text-blue-200">bukan</span>{" "}
+                    drama.
+                  </h1>
+                  <p className="mt-4 text-blue-200/90 text-base leading-relaxed max-w-md">
+                    Sejak 2019, kami belajar dari setiap rental yang mengecewakan — lalu membangun yang lebih jujur.
+                  </p>
+                </div>
               </ScrollReveal>
-            </div>
 
-            <div className="col-span-12 lg:col-span-3 lg:pb-3">
+              {/* Feature list */}
               <ScrollReveal delay={150}>
-                <p className="text-base lg:text-lg leading-relaxed text-[#1A1A1A]/75 max-w-xs">
-                  Sejak 2019, kami belajar dari setiap rental yang mengecewakan — lalu membangun yang lebih jujur.
-                </p>
+                <div className="mt-10 space-y-4">
+                  {[
+                    { icon: "M5 11l1.5-4.5A2 2 0 018.4 5h7.2a2 2 0 011.9 1.5L19 11m-14 0a2 2 0 00-2 2v4h2m-2-6h14m0 0a2 2 0 012 2v4h-2m-12 0a2 2 0 104 0m-4 0a2 2 0 004 0m2 0a2 2 0 104 0m-4 0a2 2 0 004 0", title: "Armada Terpilih", desc: "Mobil terawat, dari kategori premium sampai keluarga" },
+                    { icon: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z", title: "Booking Mudah", desc: "Pesan dalam hitungan menit, konfirmasi cepat" },
+                    { icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-7.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z", title: "Harga Jujur", desc: "Tanpa biaya tersembunyi, semua transparan" },
+                  ].map((item) => (
+                    <div key={item.title} className="flex items-start gap-4">
+                      <div className="w-9 h-9 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center flex-shrink-0">
+                        <svg className="w-4.5 h-4.5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d={item.icon} />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold">{item.title}</p>
+                        <p className="text-xs text-blue-200/80 mt-0.5">{item.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </ScrollReveal>
+
+              {/* CTA */}
+              <ScrollReveal delay={250}>
+                <div className="mt-10 flex flex-wrap items-center gap-3">
+                  <Link
+                    href="/cars"
+                    className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors"
+                  >
+                    Lihat Armada Mobil
+                    <span>→</span>
+                  </Link>
+                  <Link
+                    href="/contact"
+                    className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full border border-white/40 text-sm font-semibold text-white hover:bg-white hover:text-slate-900 transition-colors"
+                  >
+                    Hubungi Kami
+                  </Link>
+                </div>
+              </ScrollReveal>
+
+              {/* Footer quote */}
+              <div className="mt-auto pt-12">
+                <div className="border-t border-white/10 pt-6 flex items-center justify-between">
+                  <p className="text-xs text-blue-200/60">© {new Date().getFullYear()} BookingMobil.id</p>
+                  <p className="text-xs text-blue-200/60">Rental Premium</p>
+                </div>
+              </div>
             </div>
           </div>
 
-          <ScrollReveal delay={300}>
-            <div className="mt-12 lg:mt-16 max-w-4xl">
-              <HeroSearchForm />
+          {/* Right Panel — Search Form */}
+          <div className="flex-1 flex items-center justify-center p-6 sm:p-12 bg-white">
+            <div className="w-full max-w-md py-6">
+              {/* Mobile brand */}
+              <div className="lg:hidden text-center mb-8">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-600/25">
+                  <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M5 11l1.5-4.5A2 2 0 018.4 5h7.2a2 2 0 011.9 1.5L19 11m-14 0a2 2 0 00-2 2v4h2m-2-6h14m0 0a2 2 0 012 2v4h-2m-12 0a2 2 0 104 0m-4 0a2 2 0 004 0m2 0a2 2 0 104 0m-4 0a2 2 0 004 0" />
+                  </svg>
+                </div>
+                <h2 className="text-2xl font-bold text-slate-900 tracking-tight">BookingMobil<span className="text-blue-600">.id</span></h2>
+                <p className="text-sm text-slate-500 mt-1">Sewa mobil premium tanpa drama</p>
+              </div>
+
+              {/* Heading */}
+              <div className="mb-8">
+                <p className="text-sm font-medium text-blue-600 mb-2">Cari Armada Impian Anda</p>
+                <h2 className="text-3xl font-bold text-slate-900 tracking-tight">Siap Berangkat Hari Ini?</h2>
+                <p className="text-sm text-slate-500 mt-2">Pilih kategori dan tanggal, lalu temukan mobil yang pas untuk perjalanan Anda.</p>
+              </div>
+
+              {/* Card */}
+              <div className="bg-black rounded-3xl border border-white/10 p-8">
+                <HeroSearchForm />
+              </div>
             </div>
-          </ScrollReveal>
+          </div>
+        </div>
+
+        {/* Stats bar */}
+        <div className="border-t border-white/10 bg-black">
+          <div className="max-w-4xl mx-auto px-6 lg:px-10 py-8 lg:py-10 grid grid-cols-3 gap-6 lg:gap-0 text-center">
+            {[
+              { num: String(totalCars || 80).padStart(2, "0"), label: "Armada aktif" },
+              { num: totalCustomers, label: "Pelanggan" },
+              { num: "06", label: "Tahun beroperasi" },
+            ].map((stat, i) => (
+              <ScrollReveal key={i} delay={i * 80}>
+                <div className={`lg:px-10 ${i > 0 ? "lg:border-l border-white/15" : ""}`}>
+                  <p className="font-serif text-4xl lg:text-5xl tabular-nums leading-none text-white">
+                    {stat.num}
+                  </p>
+                  <p className="text-[11px] uppercase tracking-[0.2em] text-white/50 mt-2">
+                    {stat.label}
+                  </p>
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
         </div>
       </section>
 
-      <section className="border-b border-[#1A1A1A]/10 bg-[#1A1A1A] text-[#FAFAF7]">
-        <div className="max-w-6xl mx-auto px-6 lg:px-10 py-10 grid grid-cols-3 gap-6 lg:gap-0">
-          {[
-            { num: String(totalCars || 80).padStart(2, "0"), label: "Armada aktif" },
-            { num: totalCustomers, label: "Pelanggan" },
-            { num: "06", label: "Tahun beroperasi" },
-          ].map((stat, i) => (
-            <ScrollReveal key={i} delay={i * 80}>
-              <div className={`lg:px-10 ${i > 0 ? "lg:border-l border-[#FAFAF7]/15" : ""}`}>
-                <p className="font-serif text-4xl lg:text-5xl tabular-nums leading-none">
-                  {stat.num}
-                </p>
-                <p className="text-[11px] uppercase tracking-[0.2em] text-[#FAFAF7]/50 mt-2">
-                  {stat.label}
-                </p>
-              </div>
-            </ScrollReveal>
-          ))}
-        </div>
-      </section>
+      <BrandMarquee />
 
       <section className="border-b border-[#1A1A1A]/10">
         <div className="max-w-6xl mx-auto px-6 lg:px-10 py-20 lg:py-28">
@@ -138,25 +231,26 @@ export default async function HomePage() {
             </div>
           </ScrollReveal>
 
-          <div className="border-t border-[#1A1A1A]/15">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {PROCESS.map((step, i) => (
               <ScrollReveal key={step.num} delay={i * 80}>
-                <article className="grid grid-cols-12 gap-4 lg:gap-10 py-8 lg:py-10 border-b border-[#1A1A1A]/15 items-baseline">
-                  <div className="col-span-2 lg:col-span-1">
-                    <span className="font-serif text-3xl lg:text-4xl tabular-nums text-[#1A1A1A]/30">
-                      {step.num}
-                    </span>
-                  </div>
-                  <div className="col-span-10 lg:col-span-4">
-                    <h3 className="font-serif text-2xl lg:text-3xl leading-tight tracking-tight">
-                      {step.title}
-                    </h3>
-                  </div>
-                  <div className="col-span-12 lg:col-span-7">
-                    <p className="text-[15px] text-[#1A1A1A]/70 leading-relaxed max-w-xl">
-                      {step.body}
-                    </p>
-                  </div>
+                <article className="relative h-full border border-[#1A1A1A]/15 rounded-2xl bg-white p-8 transition-shadow hover:shadow-lg">
+                  <h3 className="font-serif text-2xl leading-tight tracking-tight">
+                    {step.title}
+                  </h3>
+                  <p className="mt-3 text-[15px] text-[#1A1A1A]/70 leading-relaxed">
+                    {step.body}
+                  </p>
+                  {i < PROCESS.length - 1 && (
+                    <svg
+                      className="hidden lg:block absolute top-1/2 -translate-y-1/2 -right-6 w-6 h-6 text-[#1A1A1A]/40 z-10"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  )}
                 </article>
               </ScrollReveal>
             ))}

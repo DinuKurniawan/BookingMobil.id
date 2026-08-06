@@ -15,18 +15,6 @@ const NAV_LINKS = [
 export function Navbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [authChecked, setAuthChecked] = useState(false);
-
-  useEffect(() => {
-    fetch("/api/auth/session")
-      .then((res) => res.json())
-      .then((data) => {
-        setIsAuthenticated(data.authenticated === true);
-        setAuthChecked(true);
-      })
-      .catch(() => setAuthChecked(true));
-  }, []);
 
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -85,14 +73,6 @@ export function Navbar() {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-3 flex-shrink-0">
-            {authChecked && (
-              <Link
-                href={isAuthenticated ? "/admin" : "/admin/login"}
-                className="text-[12px] font-semibold uppercase tracking-wide text-[#1A1A1A]/60 hover:text-[#1A1A1A] transition-colors"
-              >
-                {isAuthenticated ? "Dashboard" : "Login"}
-              </Link>
-            )}
             <Link
               href="/cars"
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#1A1A1A] text-[#FAFAF7] text-[12px] font-semibold uppercase tracking-wide hover:bg-[#1F4D3F] transition-colors"
@@ -140,14 +120,6 @@ export function Navbar() {
               ))}
             </nav>
             <div className="px-6 pb-6 pt-2 flex flex-col gap-2 border-t border-[#1A1A1A]/10">
-              {authChecked && (
-                <Link
-                  href={isAuthenticated ? "/admin" : "/admin/login"}
-                  className="text-center py-2.5 text-sm font-semibold uppercase tracking-wide text-[#1A1A1A] border border-[#1A1A1A]/15 rounded-full hover:bg-[#1A1A1A] hover:text-[#FAFAF7] transition-colors"
-                >
-                  {isAuthenticated ? "Dashboard" : "Login"}
-                </Link>
-              )}
               <Link
                 href="/cars"
                 className="text-center py-2.5 text-sm font-semibold uppercase tracking-wide bg-[#1A1A1A] text-[#FAFAF7] rounded-full hover:bg-[#1F4D3F] transition-colors"
