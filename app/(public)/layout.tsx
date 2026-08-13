@@ -1,7 +1,7 @@
 import React from "react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
-import { FloatingWhatsApp } from "@/components/floating-whatsapp";
+import { LazyFloatingWhatsApp } from "@/components/lazy-floating-whatsapp";
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -9,7 +9,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
       <Navbar />
       <main className="flex-1">{children}</main>
       <Footer />
-      <FloatingWhatsApp />
+      <LazyFloatingWhatsApp />
     </div>
   );
 }

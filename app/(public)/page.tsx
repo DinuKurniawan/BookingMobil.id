@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { TestimonialCarousel } from "@/components/testimonial-carousel";
+import Image from "next/image";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { HeroSearchForm } from "@/components/hero-search-form";
 import { BrandMarquee } from "@/components/brand-marquee";
-import { FleetGrid } from "@/components/fleet-grid";
+import { HomeFleetSection, HomeTestimonialSection } from "@/components/home-sections";
 import { prisma } from "@/lib/prisma";
 
 import type { CarCategory, Transmission } from "@prisma/client";
@@ -28,12 +28,23 @@ const PROCESS = [
 ];
 
 export default async function HomePage() {
-  const cars = await prisma.car.findMany({
-    where: { status: "AVAILABLE" },
-    orderBy: { createdAt: "desc" },
-    take: 8,
-    include: { _count: { select: { bookings: true } } },
-  });
+  const [cars, testimonials, totalCars, totalBookings, categoryCounts] = await Promise.all([
+    prisma.car.findMany({
+      where: { status: "AVAILABLE" },
+      orderBy: { createdAt: "desc" },
+      take: 8,
+      include: { _count: { select: { bookings: true } } },
+    }),
+    prisma.testimonial.findMany({
+      where: { isApproved: true },
+      orderBy: { createdAt: "desc" },
+      take: 20,
+      select: { name: true, role: true, text: true, rating: true },
+    }),
+    prisma.car.count({ where: { status: "AVAILABLE" } }),
+    prisma.booking.count(),
+    prisma.car.groupBy({ by: ["category"], where: { status: "AVAILABLE" }, _count: { _all: true } }),
+  ]);
 
   const carCards: CarWithMeta[] = cars.map((car) => ({
     id: car.id,
@@ -47,18 +58,6 @@ export default async function HomePage() {
     bookingCount: car._count.bookings,
   }));
 
-  const [testimonials, totalCars, totalBookings, categoryCounts] = await Promise.all([
-    prisma.testimonial.findMany({
-      where: { isApproved: true },
-      orderBy: { createdAt: "desc" },
-      take: 20,
-      select: { name: true, role: true, text: true, rating: true },
-    }),
-    prisma.car.count({ where: { status: "AVAILABLE" } }),
-    prisma.booking.count(),
-    prisma.car.groupBy({ by: ["category"], where: { status: "AVAILABLE" }, _count: { _all: true } }),
-  ]);
-
   const categoryCountMap = Object.fromEntries(categoryCounts.map((c) => [c.category, c._count._all]));
   const totalCustomers = totalBookings > 999 ? `${Math.floor(totalBookings / 1000)}K+` : `${totalBookings}+`;
 
@@ -68,13 +67,15 @@ export default async function HomePage() {
         <div className="flex flex-col lg:flex-row min-h-[560px]">
           {/* Left Panel — Branding */}
           <div className="relative bg-black text-white overflow-hidden lg:w-[55%]">
-            {/* Car background (decorative, CSS background so it does not block LCP) */}
-            <div
-              className="absolute inset-0 bg-cover bg-center opacity-40"
-              style={{
-                backgroundImage:
-                  "url('/images/Toyota Fortuner 2_4L Vrz Trds A_T 2021.jpg')",
-              }}
+            {/* Car background (optimized via next/image) */}
+            <Image
+              src="/images/Toyota Fortuner 2_4L Vrz Trds A_T 2021.jpg"
+              alt=""
+              aria-hidden
+              fill
+              priority
+              sizes="(max-width: 1023px) 100vw, 55vw"
+              className="object-cover object-center opacity-40"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/70" />
             {/* Grid pattern */}
@@ -93,7 +94,7 @@ export default async function HomePage() {
             {/* Content */}
             <div className="relative z-10 flex flex-col w-full max-w-xl mx-auto px-6 sm:px-14 py-14 lg:py-16 flex-1">
               {/* Headline */}
-              <ScrollReveal>
+              <ScrollReveal immediate>
                 <div className="mt-4 lg:mt-20">
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 backdrop-blur-sm text-xs font-medium text-blue-100 mb-6">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
@@ -111,7 +112,7 @@ export default async function HomePage() {
               </ScrollReveal>
 
               {/* Feature list */}
-              <ScrollReveal delay={150}>
+              <ScrollReveal immediate>
                 <div className="mt-10 space-y-4">
                   {[
                     { icon: "M5 11l1.5-4.5A2 2 0 018.4 5h7.2a2 2 0 011.9 1.5L19 11m-14 0a2 2 0 00-2 2v4h2m-2-6h14m0 0a2 2 0 012 2v4h-2m-12 0a2 2 0 104 0m-4 0a2 2 0 004 0m2 0a2 2 0 104 0m-4 0a2 2 0 004 0", title: "Armada Terpilih", desc: "Mobil terawat, dari kategori premium sampai keluarga" },
@@ -134,7 +135,7 @@ export default async function HomePage() {
               </ScrollReveal>
 
               {/* CTA */}
-              <ScrollReveal delay={250}>
+              <ScrollReveal immediate>
                 <div className="mt-10 flex flex-wrap items-center gap-3">
                   <Link
                     href="/cars"
@@ -192,15 +193,15 @@ export default async function HomePage() {
         </div>
 
         {/* Stats bar */}
-        <div className="border-t border-white/10 bg-black">
-          <div className="max-w-4xl mx-auto px-6 lg:px-10 py-8 lg:py-10 grid grid-cols-3 gap-6 lg:gap-0 text-center">
-            {[
-              { num: String(totalCars || 80).padStart(2, "0"), label: "Armada aktif" },
-              { num: totalCustomers, label: "Pelanggan" },
-              { num: "06", label: "Tahun beroperasi" },
-            ].map((stat, i) => (
-              <ScrollReveal key={i} delay={i * 80}>
-                <div className={`lg:px-10 ${i > 0 ? "lg:border-l border-white/15" : ""}`}>
+        <ScrollReveal>
+          <div className="border-t border-white/10 bg-black">
+            <div className="max-w-4xl mx-auto px-6 lg:px-10 py-8 lg:py-10 grid grid-cols-3 gap-6 lg:gap-0 text-center">
+              {[
+                { num: String(totalCars || 80).padStart(2, "0"), label: "Armada aktif" },
+                { num: totalCustomers, label: "Pelanggan" },
+                { num: "06", label: "Tahun beroperasi" },
+              ].map((stat, i) => (
+                <div key={stat.label} className={`lg:px-10 ${i > 0 ? "lg:border-l border-white/15" : ""}`}>
                   <p className="font-serif text-4xl lg:text-5xl tabular-nums leading-none text-white">
                     {stat.num}
                   </p>
@@ -208,10 +209,10 @@ export default async function HomePage() {
                     {stat.label}
                   </p>
                 </div>
-              </ScrollReveal>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        </ScrollReveal>
       </section>
 
       <BrandMarquee />
@@ -229,10 +230,10 @@ export default async function HomePage() {
             </div>
           </ScrollReveal>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {PROCESS.map((step, i) => (
-              <ScrollReveal key={step.num} delay={i * 80}>
-                <article className="relative h-full border border-[#1A1A1A]/15 rounded-2xl bg-white p-8 transition-shadow hover:shadow-lg">
+          <ScrollReveal>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {PROCESS.map((step, i) => (
+                <article key={step.num} className="relative h-full border border-[#1A1A1A]/15 rounded-2xl bg-white p-8 transition-shadow hover:shadow-lg">
                   <h3 className="font-serif text-2xl leading-tight tracking-tight">
                     {step.title}
                   </h3>
@@ -250,9 +251,9 @@ export default async function HomePage() {
                     </svg>
                   )}
                 </article>
-              </ScrollReveal>
-            ))}
-          </div>
+              ))}
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 
@@ -269,16 +270,17 @@ export default async function HomePage() {
             </div>
           </ScrollReveal>
 
-          <div className="border-t border-[#1A1A1A]/15">
-            {[
-              { key: "MPV", label: "MPV", body: "Untuk keluarga. Kabin luas, bagasi lega." },
-              { key: "SUV", label: "SUV", body: "Medan beragam. Ground clearance tinggi." },
-              { key: "SEDAN", label: "Sedan", body: "Perjalanan bisnis. Nyaman di jalan tol." },
-              { key: "HATCHBACK", label: "Hatchback", body: "Kompak dan lincah. Cocok untuk kota." },
-              { key: "VAN", label: "Van", body: "Kapasitas besar. Untuk rombongan." },
-            ].map((cat, i) => (
-              <ScrollReveal key={cat.key} delay={i * 60}>
+          <ScrollReveal>
+            <div className="border-t border-[#1A1A1A]/15">
+              {[
+                { key: "MPV", label: "MPV", body: "Untuk keluarga. Kabin luas, bagasi lega." },
+                { key: "SUV", label: "SUV", body: "Medan beragam. Ground clearance tinggi." },
+                { key: "SEDAN", label: "Sedan", body: "Perjalanan bisnis. Nyaman di jalan tol." },
+                { key: "HATCHBACK", label: "Hatchback", body: "Kompak dan lincah. Cocok untuk kota." },
+                { key: "VAN", label: "Van", body: "Kapasitas besar. Untuk rombongan." },
+              ].map((cat, i) => (
                 <Link
+                  key={cat.key}
                   href={`/cars?category=${cat.key}`}
                   className="grid grid-cols-12 gap-4 lg:gap-10 py-7 border-b border-[#1A1A1A]/15 items-baseline group hover:bg-[#1A1A1A]/3 transition-colors"
                 >
@@ -304,56 +306,14 @@ export default async function HomePage() {
                     </span>
                   </div>
                 </Link>
-              </ScrollReveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="border-b border-[#1A1A1A]/10">
-        <div className="max-w-6xl mx-auto px-6 lg:px-10 py-20 lg:py-28">
-          <ScrollReveal>
-            <div className="flex items-end justify-between flex-wrap gap-4 mb-12">
-              <div>
-                <p className="text-[11px] font-semibold tracking-[0.3em] uppercase text-[#1F4D3F] mb-3">
-                  Sorotan
-                </p>
-                <h2 className="font-serif text-4xl lg:text-5xl leading-tight">
-                  Pilihan minggu ini.
-                </h2>
-              </div>
-              <Link
-                href="/cars"
-                className="text-sm font-semibold text-[#1A1A1A] hover:text-[#1F4D3F] transition-colors inline-flex items-center gap-2"
-              >
-                Lihat seluruh armada
-                <span>→</span>
-              </Link>
+              ))}
             </div>
           </ScrollReveal>
-
-          <FleetGrid cars={carCards} />
         </div>
       </section>
 
-      <section className="border-b border-[#1A1A1A]/10 bg-[#FAFAF7]">
-        <div className="max-w-6xl mx-auto px-6 lg:px-10 py-20 lg:py-28">
-          <ScrollReveal>
-            <div className="flex items-baseline justify-between flex-wrap gap-4 mb-12">
-              <p className="text-[11px] font-semibold tracking-[0.3em] uppercase text-[#1F4D3F]">
-                Suara Pelanggan
-              </p>
-              <p className="font-serif text-3xl lg:text-4xl italic text-[#1A1A1A]/70 max-w-md text-right">
-                Apa kata mereka yang sudah mencoba.
-              </p>
-            </div>
-          </ScrollReveal>
-
-          <ScrollReveal>
-            <TestimonialCarousel testimonials={testimonials} />
-          </ScrollReveal>
-        </div>
-      </section>
+      <HomeFleetSection cars={carCards} />
+      <HomeTestimonialSection testimonials={testimonials} />
 
       <section className="bg-[#1A1A1A] text-[#FAFAF7]">
         <div className="max-w-6xl mx-auto px-6 lg:px-10 py-20 lg:py-28 grid grid-cols-12 gap-6 lg:gap-10 items-end">
