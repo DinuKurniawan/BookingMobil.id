@@ -3,12 +3,30 @@
 import { useEffect, useRef, useState } from "react";
 
 interface UseScrollAnimationOptions {
-  /** Trigger once and never re-hide */
   once?: boolean;
-  /** Margin before the element enters viewport (CSS margin string) */
   rootMargin?: string;
-  /** 0 to 1 — how much of the element must be visible */
   threshold?: number;
+}
+
+type Callback = (isIntersecting: boolean) => void;
+
+let sharedObserver: IntersectionObserver | null = null;
+const callbacks = new WeakMap<Element, Callback>();
+
+function getObserver(rootMargin: string, threshold: number) {
+  if (sharedObserver) return sharedObserver;
+
+  sharedObserver = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        const cb = callbacks.get(entry.target);
+        cb?.(entry.isIntersecting);
+      }
+    },
+    { rootMargin, threshold },
+  );
+
+  return sharedObserver;
 }
 
 export function useScrollAnimation({
@@ -23,20 +41,18 @@ export function useScrollAnimation({
     const node = ref.current;
     if (!node) return;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          if (once) observer.unobserve(node);
-        } else if (!once) {
-          setIsVisible(false);
-        }
-      },
-      { rootMargin, threshold }
-    );
+    const observer = getObserver(rootMargin, threshold);
+    callbacks.set(node, (intersecting) => {
+      if (intersecting) {
+        setIsVisible(true);
+        if (once) observer.unobserve(node);
+      } else if (!once) {
+        setIsVisible(false);
+      }
+    });
 
     observer.observe(node);
-    return () => observer.disconnect();
+    return () => observer.unobserve(node);
   }, [once, rootMargin, threshold]);
 
   return { ref, isVisible };

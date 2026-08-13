@@ -1,26 +1,6 @@
-"use client";
-
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { CAR_CATEGORIES, CAR_CATEGORY_LABELS } from "@/lib/validations/car";
 
 export function HeroSearchForm() {
-  const router = useRouter();
-  const [category, setCategory] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const params = new URLSearchParams();
-    if (category) params.set("category", category);
-    if (startDate) params.set("startDate", startDate);
-    if (endDate) params.set("endDate", endDate);
-
-    const qs = params.toString();
-    router.push(`/cars${qs ? `?${qs}` : ""}`);
-  }
-
   const today = new Date().toISOString().split("T")[0];
 
   const inputClass =
@@ -30,7 +10,7 @@ export function HeroSearchForm() {
     "w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500 transition-all appearance-none cursor-pointer pr-10";
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form action="/cars" method="GET" className="space-y-4">
       <div className="flex-1 min-w-0">
         <label
           htmlFor="hero-category"
@@ -41,8 +21,8 @@ export function HeroSearchForm() {
         <div className="relative">
           <select
             id="hero-category"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
+            name="category"
+            defaultValue=""
             className={selectClass}
           >
             <option value="">Semua Kategori</option>
@@ -79,9 +59,8 @@ export function HeroSearchForm() {
           <input
             id="hero-start"
             type="date"
-            value={startDate}
+            name="startDate"
             min={today}
-            onChange={(e) => setStartDate(e.target.value)}
             className={inputClass}
           />
         </div>
@@ -96,9 +75,8 @@ export function HeroSearchForm() {
           <input
             id="hero-end"
             type="date"
-            value={endDate}
-            min={startDate || today}
-            onChange={(e) => setEndDate(e.target.value)}
+            name="endDate"
+            min={today}
             className={inputClass}
           />
         </div>
