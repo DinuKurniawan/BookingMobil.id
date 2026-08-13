@@ -1,4 +1,4 @@
-import { CAR_CATEGORIES, CAR_CATEGORY_LABELS } from "@/lib/validations/car";
+import { CAR_CATEGORIES, CAR_CATEGORY_LABELS } from "@/lib/car-constants";
 
 export function HeroSearchForm() {
   const today = new Date().toISOString().split("T")[0];

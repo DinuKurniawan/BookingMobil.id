@@ -1,35 +1,22 @@
 import { z } from "zod";
+import {
+  CAR_CATEGORIES,
+  TRANSMISSIONS,
+  CAR_STATUSES,
+  MAX_IMAGE_SIZE,
+} from "@/lib/car-constants";
 
-export const CAR_CATEGORIES = ["MPV", "SUV", "SEDAN", "HATCHBACK", "VAN"] as const;
-export const TRANSMISSIONS = ["MANUAL", "AUTOMATIC"] as const;
-export const CAR_STATUSES = ["AVAILABLE", "MAINTENANCE", "INACTIVE"] as const;
-
-export const CAR_STATUS_LABELS: Record<(typeof CAR_STATUSES)[number], string> = {
-  AVAILABLE: "Tersedia",
-  MAINTENANCE: "Perawatan",
-  INACTIVE: "Nonaktif",
-};
-
-export const CAR_CATEGORY_LABELS: Record<(typeof CAR_CATEGORIES)[number], string> = {
-  MPV: "MPV",
-  SUV: "SUV",
-  SEDAN: "Sedan",
-  HATCHBACK: "Hatchback",
-  VAN: "Van",
-};
-
-export const TRANSMISSION_LABELS: Record<(typeof TRANSMISSIONS)[number], string> = {
-  MANUAL: "Manual",
-  AUTOMATIC: "Automatis",
-};
-
-/**
- * Booking statuses that count as "active" — a car with any of these
- * cannot be deleted because it would orphan an in-progress booking.
- */
-export const ACTIVE_BOOKING_STATUSES = ["PENDING", "PAYMENT_REVIEW", "CONFIRMED", "ONGOING"] as const;
-
-export const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB per file
+export {
+  CAR_CATEGORIES,
+  TRANSMISSIONS,
+  CAR_STATUSES,
+  CAR_STATUS_LABELS,
+  CAR_CATEGORY_LABELS,
+  TRANSMISSION_LABELS,
+  ACTIVE_BOOKING_STATUSES,
+  MAX_IMAGE_SIZE,
+  formatCurrency,
+} from "@/lib/car-constants";
 
 export const carFormSchema = z.object({
   name: z.string().trim().min(1, "Nama mobil wajib diisi"),
@@ -74,12 +61,3 @@ export type CarFormState = {
   message?: string;
   success?: boolean;
 };
-
-export function formatCurrency(value: number | string): string {
-  const num = typeof value === "string" ? Number(value) : value;
-  return new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    maximumFractionDigits: 0,
-  }).format(num);
-}

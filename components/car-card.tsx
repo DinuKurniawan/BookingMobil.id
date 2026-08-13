@@ -4,7 +4,7 @@ import {
   CAR_CATEGORY_LABELS,
   TRANSMISSION_LABELS,
   formatCurrency,
-} from "@/lib/validations/car";
+} from "@/lib/car-constants";
 import type { CarCategory, Transmission } from "@prisma/client";
 
 export type CarCardData = {

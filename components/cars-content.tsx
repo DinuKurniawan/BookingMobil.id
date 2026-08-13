@@ -11,7 +11,7 @@ import {
   TRANSMISSIONS,
   TRANSMISSION_LABELS,
   formatCurrency,
-} from "@/lib/validations/car";
+} from "@/lib/car-constants";
 
 type CarWithMeta = {
   id: string;

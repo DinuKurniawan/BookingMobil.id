@@ -75,6 +75,7 @@ export default async function HomePage() {
               alt="Toyota Fortuner armada kami"
               fill
               preload
+              quality={60}
               sizes="(max-width: 1023px) 100vw, 55vw"
               className="absolute inset-0 object-cover object-center opacity-40"
             />

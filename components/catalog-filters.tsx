@@ -8,7 +8,7 @@ import {
   TRANSMISSIONS,
   TRANSMISSION_LABELS,
   formatCurrency,
-} from "@/lib/validations/car";
+} from "@/lib/car-constants";
 
 const PRICE_PRESETS = [
   { label: "Semua", min: "", max: "" },
