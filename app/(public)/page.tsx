@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { TestimonialCarousel } from "@/components/testimonial-carousel";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { HeroSearchForm } from "@/components/hero-search-form";
@@ -69,15 +68,13 @@ export default async function HomePage() {
         <div className="flex flex-col lg:flex-row min-h-[560px]">
           {/* Left Panel — Branding */}
           <div className="relative bg-black text-white overflow-hidden lg:w-[55%]">
-            {/* Car background */}
-            <Image
-              src="/images/Toyota Fortuner 2_4L Vrz Trds A_T 2021.jpg"
-              alt="Toyota Fortuner armada kami"
-              fill
-              preload
-              quality={60}
-              sizes="(max-width: 1023px) 100vw, 55vw"
-              className="absolute inset-0 object-cover object-center opacity-40"
+            {/* Car background (decorative, CSS background so it does not block LCP) */}
+            <div
+              className="absolute inset-0 bg-cover bg-center opacity-40"
+              style={{
+                backgroundImage:
+                  "url('/images/Toyota Fortuner 2_4L Vrz Trds A_T 2021.jpg')",
+              }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/70" />
             {/* Grid pattern */}
