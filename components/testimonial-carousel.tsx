@@ -1,7 +1,3 @@
-"use client";
-
-import { useState } from "react";
-
 interface TestimonialItem {
   name: string;
   role?: string | null;
@@ -53,38 +49,19 @@ const FALLBACKS: TestimonialItem[] = [
 ];
 
 export function TestimonialCarousel({ testimonials }: TestimonialCarouselProps) {
-  const [paused, setPaused] = useState(false);
-
   const items = testimonials.length > 0 ? testimonials : FALLBACKS;
   const count = items.length;
-
-  // Duplicate for seamless infinite scroll
   const ITEMS = [...items, ...items];
+  const duration = Math.max(count * 5, 15);
 
   return (
-    <div
-      className="relative overflow-hidden"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-    >
-      {/* Gradient fade edges */}
+    <div className="relative overflow-hidden">
       <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
       <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
 
-      <style>{`
-        @keyframes testimonial-scroll {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-      `}</style>
-
       <div
-        className="flex gap-6 py-4"
-        style={{
-          width: "max-content",
-          animation: `testimonial-scroll ${Math.max(count * 5, 15)}s linear infinite`,
-          animationPlayState: paused ? "paused" : "running",
-        }}
+        className="marquee-track flex gap-6 py-4"
+        style={{ width: "max-content", animationDuration: `${duration}s` }}
       >
         {ITEMS.map((item, i) => (
           <div

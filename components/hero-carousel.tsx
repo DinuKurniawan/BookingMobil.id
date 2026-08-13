@@ -49,7 +49,7 @@ export function HeroCarousel({ slides, interval = 6000 }: HeroCarouselProps) {
             src={slide.src}
             alt={slide.alt}
             fill
-            priority={i === 0}
+            preload={i === 0}
             sizes="100vw"
             className="object-cover object-center bg-[#1A1A1A]"
           />

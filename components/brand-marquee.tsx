@@ -1,7 +1,3 @@
-"use client";
-
-import { useState } from "react";
-
 const BRANDS = [
   "Toyota",
   "Honda",
@@ -22,10 +18,9 @@ const BRANDS = [
 ];
 
 export function BrandMarquee() {
-  const [paused, setPaused] = useState(false);
-
   const count = BRANDS.length;
   const ITEMS = [...BRANDS, ...BRANDS];
+  const duration = Math.max(count * 3, 20);
 
   return (
     <section className="border-b border-[#1A1A1A]/10 bg-white">
@@ -35,29 +30,13 @@ export function BrandMarquee() {
         </p>
       </div>
 
-      <div
-        className="relative overflow-hidden"
-        onMouseEnter={() => setPaused(true)}
-        onMouseLeave={() => setPaused(false)}
-      >
-        {/* Gradient fade edges */}
+      <div className="relative overflow-hidden">
         <div className="absolute left-0 top-0 bottom-0 w-16 lg:w-24 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-16 lg:w-24 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
 
-        <style>{`
-          @keyframes brand-scroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-          }
-        `}</style>
-
         <div
-          className="flex gap-4 py-4"
-          style={{
-            width: "max-content",
-            animation: `brand-scroll ${Math.max(count * 3, 20)}s linear infinite`,
-            animationPlayState: paused ? "paused" : "running",
-          }}
+          className="marquee-track flex gap-4 py-4"
+          style={{ width: "max-content", animationDuration: `${duration}s` }}
         >
           {ITEMS.map((brand, i) => (
             <div

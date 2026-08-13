@@ -49,7 +49,7 @@ export function CarImageGallery({ images, carName }: CarImageGalleryProps) {
           fill
           sizes="(max-width: 1024px) 100vw, 66vw"
           className="object-cover transition-transform duration-500 group-hover:scale-[1.03] animate-[fadeIn_0.3s_ease-out]"
-          priority={activeIndex === 0}
+          preload={activeIndex === 0}
         />
 
         {/* Counter badge */}

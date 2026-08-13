@@ -74,8 +74,8 @@ export default async function HomePage() {
               src="/images/Toyota Fortuner 2_4L Vrz Trds A_T 2021.jpg"
               alt="Toyota Fortuner armada kami"
               fill
-              priority
-              sizes="55vw"
+              preload
+              sizes="(max-width: 1023px) 100vw, 55vw"
               className="absolute inset-0 object-cover object-center opacity-40"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/70" />
